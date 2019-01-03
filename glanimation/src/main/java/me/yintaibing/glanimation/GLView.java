@@ -1,29 +1,16 @@
 package me.yintaibing.glanimation;
 
+import android.opengl.GLES20;
+import android.opengl.Matrix;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.ViewGroup;
 
-import java.nio.Buffer;
+import java.nio.FloatBuffer;
 
 public class GLView {
-    // 顶点绘制顺序索引数组
-    private static final short[] ARRAY_VERTEX_INDEX = {
-            0, 1, 2,
-            2, 3, 0
-    };
-    // 顶点绘制顺序索引缓冲
-    private static final Buffer BUFFER_VERTEX_INDEX = Utils.toShortBuffer(ARRAY_VERTEX_INDEX);
-    // 纹理顶点绘制顺序索引数组
-    private static final short[] ARRAY_TEXTURE_VERTEX_INDEX = {
-            // 1f, 1f, 0f, 1f, 0f, 0f, 1f, 0f
-            // OpenGL坐标与纹理坐标Y轴相反，所以坐标y取反
-            1, 0, 0, 0, 0, 1, 1, 1
-    };
-    // 纹理顶点绘制顺序索引缓冲
-    private static final Buffer BUFFER_TEXTURE_VERTEX_INDEX = Utils.toShortBuffer(
-            ARRAY_TEXTURE_VERTEX_INDEX);
+    private static final String TAG = "GLView";
 
-
+    public String mName;
     // 这个View的左下角
     private GLLayoutParams mLayoutParams;
     private int mX;
@@ -35,19 +22,72 @@ public class GLView {
     private boolean mVisible;
 
     private float[] mArrayVertexCoord;// 顶点坐标数组，length = 4 vertices * 3 dimension
-    private Buffer mBufferVertexCoord;// 顶点坐标缓冲
+//    private Buffer mBufferVertexCoord;// 顶点坐标缓冲
+    private int mBufferVertexCoord;
     private float[] mArrayVertexColor;// 顶点颜色数组，length = 4 vertices * 4 dimension
-    private Buffer mBufferVertexColor;// 顶点颜色缓冲
+//    private Buffer mBufferVertexColor;// 顶点颜色缓冲
+
+    private float[] mModelMatrix = new float[16];
+    private GLAnimation mGLAnimation;
+    private GLTexture mGLTexture;
+
+    public GLView(String mName) {
+        this.mName = mName;
+    }
+
+    public int getMeasuredWidth() {
+        return mMeasuredWidth;
+    }
+
+    public int getMeasuredHeight() {
+        return mMeasuredHeight;
+    }
+
+    public GLLayoutParams getLayoutParams() {
+        return mLayoutParams;
+    }
+
+    public void setLayoutParams(GLLayoutParams mLayoutParams) {
+        this.mLayoutParams = mLayoutParams;
+    }
 
     public int getNeedBufferCount() {
         int count = 0;
-        if (mBufferVertexCoord != null) {
+        if (mArrayVertexCoord != null) {
             count++;
         }
-        if (mBufferVertexColor != null) {
+        if (mArrayVertexColor != null) {
             count++;
         }
         return count;
+    }
+
+    public int getBufferVertexCoord() {
+        return mBufferVertexCoord;
+    }
+
+    public float[] getModelMatrix() {
+        Matrix.setIdentityM(mModelMatrix, 0);
+        if (mGLAnimation != null) {
+            Matrix.multiplyMM(mModelMatrix, 0, mGLAnimation.getMatrix(), 0, mModelMatrix, 0);
+        }
+        return mModelMatrix;
+    }
+
+    public GLAnimation getAnimation() {
+        return mGLAnimation;
+    }
+
+    public void setAnimation(GLAnimation mGLAnimation) {
+        this.mGLAnimation = mGLAnimation;
+    }
+
+    public GLTexture getTexture() {
+        return mGLTexture;
+    }
+
+    public void setTexture(GLTexture mGLTexture) {
+        this.mGLTexture = mGLTexture;
     }
 
     public void onMeasure(int parentWidth, int parentHeight) {
@@ -60,6 +100,10 @@ public class GLView {
                 - margin[0] - margin[2];
         mMeasuredHeight = measureSize(parentHeight, mLayoutParams.height, mLayoutParams.heightRatio)
                 - margin[1] - margin[3];
+
+        Log.e(TAG, "name=" + mName
+                + " onMeasure, mMeasuredWidth=" + mMeasuredWidth
+                + " mMeasuredHeight=" + mMeasuredHeight);
     }
 
     public void onLayout(int left, int top, int right, int bottom) {
@@ -67,8 +111,8 @@ public class GLView {
             return;
         }
 
-        int parentWidth = right - left;
-        int parentHeight = bottom - top;
+        int parentWidth = Math.abs(right - left);
+        int parentHeight = Math.abs(bottom - top);
         int[] margin = getMargin();
         switch (mLayoutParams.gravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
             case Gravity.START:
@@ -103,15 +147,49 @@ public class GLView {
         mZ = mLayoutParams.z;
         mArrayVertexCoord = getVertexCoordArray(parentWidth, parentHeight,
                 mX, mY, mZ, mMeasuredWidth, mMeasuredHeight);
-        mBufferVertexCoord = Utils.toFloatBuffer(mArrayVertexCoord);
+
+        Log.e(TAG, "name=" + mName
+                + " onLayout, "
+                +" mX=" + mX + " mY=" + mY + " mZ=" + mZ
+                + " vertexCoord=" + vertexCoordStr());
+    }
+
+    private String vertexCoordStr() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (int i = 0; i < mArrayVertexCoord.length; i++) {
+            sb.append(mArrayVertexCoord[i]);
+            sb.append(",");
+            if (i > 0 && (i + 1) % 3 == 0) {
+                sb.append("  ");
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    public int saveBuffers(int[] buffers, int bufferIndex) {
+        mBufferVertexCoord = buffers[bufferIndex];
+        FloatBuffer vertexCoordBufferData = Utils.toFloatBuffer(mArrayVertexCoord);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mBufferVertexCoord);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, mArrayVertexCoord.length * Utils.BYTES_OF_FLOAT,
+                vertexCoordBufferData, GLES20.GL_STATIC_DRAW);
+        return 1;
     }
 
     public void onPreDraw(GLAnimationEngine engine) {
-
+//        mBufferVertexCoord = engine.pollBuffer();
+//        FloatBuffer vertexCoordBufferData = Utils.toFloatBuffer(mArrayVertexCoord);
+//        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mBufferVertexCoord);
+//        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, mArrayVertexCoord.length * Utils.BYTES_OF_FLOAT,
+//                vertexCoordBufferData, GLES20.GL_STATIC_DRAW);
     }
 
-    public void onDraw() {
-
+    public void onDraw(GLAnimationEngine engine) {
+//        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mBufferVertexCoord);
+//        GLES20.glVertexAttribPointer(engine.getAttribute_vertex_coord(), 3, GLES20.GL_FLOAT, false,
+//                0, 0);
+//        GLES20.glEnableVertexAttribArray(engine.getAttribute_vertex_coord());
     }
 
     private int[] getMargin() {
@@ -141,22 +219,34 @@ public class GLView {
 
     public static float[] getVertexCoordArray(int parentWidth, int parentHeight,
                                               int x, int y, int z, int width, int height) {
-//        PointF rightTop = new PointF(x + width, y + height);
-//        PointF leftTop = new PointF(x, y + height);
-//        PointF leftBottom = new PointF(x, y);
-//        PointF rightBottom = new PointF(x + width, y);
-
-        // OpenGL坐标系原点在(parentWidth/2, parentHeight/2)处，相当于坐标反向平移
+        /*
+         * OpenGL坐标系原点在(parentWidth/2, parentHeight/2)处，且y轴向上，
+         * 相当于坐标反向平移父布局长宽各一半，然后y值取反
+         */
         float offsetX = parentWidth * -0.5f;
         float offsetY = parentHeight * -0.5f;
 
         // 右上，左上，左下，右下
-        return new float[]{
-                x + width + offsetX, y + height + offsetY, z,
-                x + offsetX, y + height + offsetY, z,
+        float[] vertices = {
+                x + width + offsetX, y + offsetY, z,
                 x + offsetX, y + offsetY, z,
-                x + width + offsetX, y + offsetY, z
+                x + offsetX, y + height + offsetY, z,
+                x + width + offsetX, y + height + offsetY, z
         };
+        for (int i = 0; i < vertices.length; i++) {
+            switch (i % 3) {
+                case 0:
+                    // x
+                    vertices[i] /= Math.abs(offsetX);
+                    break;
+
+                case 1:
+                    // y
+                    vertices[i] /= offsetY;
+                    break;
+            }
+        }
+        return vertices;
     }
 
     public static class GLLayoutParams {

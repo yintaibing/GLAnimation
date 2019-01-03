@@ -5,6 +5,8 @@ import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
+import java.util.List;
+
 public class GLSurfaceViewExt extends GLSurfaceView {
     private GLAnimationEngine mEngine;
 
@@ -23,7 +25,14 @@ public class GLSurfaceViewExt extends GLSurfaceView {
         setZOrderOnTop(false);
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
 //        getHolder().addCallback(null);
-        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        mEngine = new GLAnimationEngine(this);
         setRenderer(mEngine);
+        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        onPause();
+    }
+
+    public void render(List<GLView> views) {
+        mEngine.setViews(views);
+        onResume();
     }
 }
