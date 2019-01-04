@@ -25,9 +25,9 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
     private static int BUFFER_VERTEX_INDEX;
     // 纹理顶点绘制顺序索引数组
     private static final float[] ARRAY_TEXTURE_VERTEX = {
-            // 1f, 1f, 0f, 1f, 0f, 0f, 1f, 0f
+            // 1f, 1f, 1f, 0f, 0f, 0f, 0f, 1f
             // OpenGL坐标与纹理坐标Y轴相反，所以坐标y取反
-            1, 0, 0, 0, 0, 1, 1, 1
+            1f, 0f, 1f, 1f, 0f, 1f, 0f, 0f
     };
     // 纹理顶点绘制顺序索引缓冲
     private static int BUFFER_TEXTURE_VERTEX;
@@ -47,6 +47,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
 
     private float[] mMVPMatrix = new float[16];
     private float[] mProjectionMatrix = new float[16];
+    private float[] mViewMatrix = new float[16];
 
     public GLAnimationEngine(GLSurfaceViewExt glSurfaceViewExt) {
         mGLSurfaceViewExt = glSurfaceViewExt;
@@ -73,14 +74,14 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         // face-culling
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glCullFace(GLES20.GL_BACK);
-        GLES20.glFrontFace(GLES20.GL_CCW);
+        GLES20.glFrontFace(GLES20.GL_CW);
 
         // alpha blend
         GLES20.glEnable(GLES20.GL_BLEND);
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 
         // depth testing
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+//        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
         // load textures
         Utils.loadTextures(mViews);
@@ -115,6 +116,14 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         GLES20.glEnableVertexAttribArray(mProgram.getAttribute_texture_coord());
 
         for (GLView view : mViews) {
+            // texture
+            GLTexture texture = view.getTexture();
+            if (texture != null && texture.isValid()) {
+                GLES20.glActiveTexture(texture.index);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.id);
+                GLES20.glUniform1i(mProgram.getUniform_texture(), 0);
+            }
+
             // vertex coord
             GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, view.getBufferVertexCoord());
             GLES20.glVertexAttribPointer(mProgram.getAttribute_vertex_coord(), 3, GLES20.GL_FLOAT,
@@ -122,6 +131,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             GLES20.glEnableVertexAttribArray(mProgram.getAttribute_vertex_coord());
 
             // mvp matrix
+            Matrix.setIdentityM(mViewMatrix, 0);
             Matrix.setIdentityM(mProjectionMatrix, 0);
             float aspectRatio = Math.max(mWidth, mHeight) / Math.min(mWidth, mHeight);
             if (mWidth > mHeight) {
@@ -131,19 +141,12 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             }
             Matrix.setIdentityM(mMVPMatrix, 0);
             Matrix.multiplyMM(mMVPMatrix, 0, view.getModelMatrix(), 0, mMVPMatrix, 0);
+            Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mMVPMatrix, 0);
             Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
             GLES20.glUniformMatrix4fv(mProgram.getUniform_mvp_matrix(), 1, false, mMVPMatrix, 0);
 
-            // texture
-            GLTexture texture = view.getTexture();
-            if (texture != null && texture.isValid()) {
-                GLES20.glActiveTexture(texture.index);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.id);
-                GLES20.glUniform1i(mProgram.getUniform_texture(), 0);
-            }
-
             // multiply color
-//            GLES20.glUniform4f(mProgram.getUniform_multiply_color(), 1f, 1f, 1f, 1f);
+            GLES20.glUniform4f(mProgram.getUniform_multiply_color(), 1f, 1f, 1f, 1f);
 
             // view vertex index
             GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, BUFFER_VERTEX_INDEX);
@@ -184,6 +187,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         if (bufferCount > 0) {
             int publicBufferCount = 2;// BUFFER_VERTEX_INDEX、BUFFER_TEXTURE_VERTEX也各需要一个
             bufferCount += publicBufferCount;
+            Log.e(TAG, "bufferCount=" + bufferCount);
             int buffers[] = new int[bufferCount];
             GLES20.glGenBuffers(bufferCount, buffers, 0);
 

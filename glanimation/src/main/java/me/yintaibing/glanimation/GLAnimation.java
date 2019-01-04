@@ -6,7 +6,10 @@ import android.util.Log;
 public abstract class GLAnimation {
     private static final String TAG = "GLAnimation";
 
-    protected float[] mMatrix;
+    public static final int RELATIVE_TO_PARENT = 0;
+    public static final int RELATIVE_TO_SELF = 1;
+
+    protected float[] mMatrix = new float[16];
     protected int mParentWidth;
     protected int mParentHeight;
     protected int mChildWidth;
@@ -18,8 +21,6 @@ public abstract class GLAnimation {
     protected boolean mFinished;
 
     public GLAnimation() {
-        mMatrix = new float[16];
-        Matrix.setIdentityM(mMatrix, 0);
     }
 
     public void setDuration(long duration) {
@@ -55,6 +56,7 @@ public abstract class GLAnimation {
         mParentHeight = parentHeight;
         mChildWidth = childWidth;
         mChildHeight = childHeight;
+        resetIdentity();
         prepare();
     }
 
@@ -69,4 +71,18 @@ public abstract class GLAnimation {
     }
 
     protected abstract void update(float progress);
+
+    protected void resetIdentity() {
+        Matrix.setIdentityM(mMatrix, 0);
+    }
+
+    protected static float resolveSize(int type, float value, int size, int parentSize) {
+        switch (type) {
+            case RELATIVE_TO_SELF:
+                return size * value;
+            case RELATIVE_TO_PARENT:
+            default:
+                return parentSize * value;
+        }
+    }
 }

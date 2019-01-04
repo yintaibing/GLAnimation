@@ -3,39 +3,70 @@ package me.yintaibing.glanimation;
 import android.opengl.Matrix;
 
 public class GLTranslateAnimation extends GLAnimation {
-    // 暂时都是RELATIVE_TO_SELF
-    private float mFromXRatio;
-    private float mFromYRatio;
-    private float mToXRatio;
-    private float mToYRatio;
+    private static final String TAG = "GLTranslateAnimation";
 
-    public GLTranslateAnimation(float mFromXRatio, float mFromYRatio, float mToXRatio, float mToYRatio) {
-        this.mFromXRatio = mFromXRatio;
-        this.mFromYRatio = mFromYRatio;
-        this.mToXRatio = mToXRatio;
-        this.mToYRatio = mToYRatio;
+    // 暂时都是RELATIVE_TO_SELF
+    private int mFromXType;
+    private int mFromYType;
+    private int mToXType;
+    private int mToYType;
+    private float mFromXValue;
+    private float mFromYValue;
+    private float mToXValue;
+    private float mToYValue;
+
+    private float mFromXDelta;
+    private float mFromYDelta;
+    private float mToXDelta;
+    private float mToYDelta;
+
+    public GLTranslateAnimation(int fromXType, float fromXValue, int fromYType, float fromYValue,
+                                int toXType, float toXValue, int toYType, float toYValue) {
+        mFromXType = fromXType;
+        mFromXValue = fromXValue;
+        mFromYType = fromYType;
+        mFromYValue = fromYValue;
+        mToXType = toXType;
+        mToXValue = toXValue;
+        mToYType = toYType;
+        mToYValue = toYValue;
     }
 
     @Override
     protected void prepare() {
-        Matrix.setIdentityM(mMatrix, 0);
-//        if (mFillBefore) {
-//            float dx = mChildWidth * mFromXRatio;
-//            float dy = mChildHeight * mFromYRatio;
-//            if (dx != 0 || dy != dy) {
-//                Matrix.translateM(mMatrix, 0, dx / mChildWidth, dy / mChildHeight, 0);
-//            }
-//        }
+        mFromXDelta = resolveSize(mFromXType, mFromXValue, mChildWidth, mParentWidth);
+        mFromYDelta = resolveSize(mFromYType, mFromYValue, mChildHeight, mParentHeight);
+        mToXDelta = resolveSize(mToXType, mToXValue, mChildWidth, mParentWidth);
+        mToYDelta = resolveSize(mToYType, mToYValue, mChildHeight, mParentHeight);
+
+        if (mFillBefore) {
+            if (mFromXDelta != 0f || mFromYDelta != 0f) {
+                translate(0);
+            }
+        }
     }
 
     @Override
     protected void update(float progress) {
-        Matrix.setIdentityM(mMatrix, 0);
-//        float totalDx = mChildWidth * (mToXRatio - mFromXRatio);
-//        float currentDx = totalDx * progress;
-//        float totalDy = mChildHeight * (mFromYRatio - mToYRatio);// Android Y轴与OpenGL方向相反
-//        float currentDy = totalDy * progress;
-//        Matrix.translateM(mMatrix, 0, currentDx / mChildWidth, currentDy / mChildHeight, 0);
-        Matrix.scaleM(mMatrix, 0, progress, progress, 1);
+        resetIdentity();
+        translate(progress);
+    }
+
+    private void translate(float progress) {
+        float dx = mFromXDelta;
+        float dy = mFromYDelta;
+        if (mFromXDelta != mToXDelta) {
+            dx = mFromXDelta + ((mToXDelta - mFromXDelta) * progress);
+        }
+        if (mFromYDelta != mToYDelta) {
+            dy = mFromYDelta + ((mToYDelta - mFromYDelta) * progress);
+        }
+        float tx = (dx / mChildWidth) * (mChildWidth / (mParentWidth * 0.5f));
+        float ty = (dy / mChildHeight) * (mChildHeight / (mParentHeight * 0.5f));
+//        Log.e(TAG, "dx=" + dx
+//                + " tx=" + tx
+//                + " dy=" + dy
+//                + " ty=" + ty);
+        Matrix.translateM(mMatrix, 0, tx, ty, 0);
     }
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +28,12 @@ public class GLRomanticDateActivity extends Activity {
         setContentView(R.layout.activity_gl_romantic_date);
 
         glSurfaceViewExt = findViewById(R.id.gl_surface_view);
-        glSurfaceViewExt.setOnClickListener(new View.OnClickListener() {
-            boolean clicked;
+        glSurfaceViewExt.postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-                if (clicked) {
-                    return;
-                }
-                clicked = true;
+            public void run() {
                 romanticDate();
             }
-        });
+        }, 1000L);
     }
 
     private void romanticDate() {
@@ -54,15 +48,18 @@ public class GLRomanticDateActivity extends Activity {
         GLView flower = new GLView("flower");
 
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
-        lp.widthRatio = 1f;
+        lp.widthRatio = 0.25f;
         lp.heightRatio = 0.25f;
+//        lp.z = 0.5f;
         lp.gravity = Gravity.BOTTOM;
         flower.setLayoutParams(lp);
 
         GLTexture texture = new GLTexture(FILE_FLOWER);
         flower.setTexture(texture);
 
-        GLAnimation animation = new GLTranslateAnimation(0f, -1f, 0f, 0f);
+        GLAnimation animation = new GLTranslateAnimation(
+                GLAnimation.RELATIVE_TO_PARENT, 1f, GLAnimation.RELATIVE_TO_PARENT, 1f,
+                GLAnimation.RELATIVE_TO_PARENT, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
         animation.setDuration(2000L);
         animation.setFillBefore(true);
         animation.setFillAfter(true);

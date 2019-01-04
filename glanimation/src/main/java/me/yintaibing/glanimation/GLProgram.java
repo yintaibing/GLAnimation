@@ -37,11 +37,11 @@ public class GLProgram {
                 "uniform_multiply_color");
 
         Log.e(TAG, "program linked, mProgramHandle=" + mProgramHandle
-                + " avc=" + attribute_vertex_coord
-                + " atc=" + attribute_texture_coord
-                + " umm=" + uniform_mvp_matrix
-                + " ut=" + uniform_texture
-                + " umc=" + uniform_multiply_color);
+                + " vertex_coord=" + attribute_vertex_coord
+                + " texture_coord=" + attribute_texture_coord
+                + " mvp=" + uniform_mvp_matrix
+                + " texture=" + uniform_texture
+                + " multiply_color=" + uniform_multiply_color);
     }
 
     public void use() {

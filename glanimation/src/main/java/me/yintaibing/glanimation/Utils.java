@@ -79,14 +79,19 @@ public class Utils {
         GLTexture largestTexture = null;
         for (GLView view : views) {
             texture = view.getTexture();
-            BitmapFactory.decodeFile(texture.path, options);
-            texture.pixelCount = options.outWidth * options.outHeight;
-            if (largestTexture == null ||
-                    texture.pixelCount > largestTexture.pixelCount) {
-                largestTexture = texture;
-                Log.e(TAG, "largestTexture=" + largestTexture.path);
+            if (texture != null) {
+                BitmapFactory.decodeFile(texture.path, options);
+                texture.pixelCount = options.outWidth * options.outHeight;
+                if (largestTexture == null ||
+                        texture.pixelCount > largestTexture.pixelCount) {
+                    largestTexture = texture;
+                    Log.e(TAG, "largestTexture=" + largestTexture.path);
+                }
+                count++;
             }
-            count++;
+        }
+        if (count == 0) {
+            return;
         }
 
         // load bitmaps and create textures
@@ -95,18 +100,15 @@ public class Utils {
         int index = 0;
         GLES20.glGenTextures(count, textureIds, 0);
 
-        Bitmap bitmap = null;
-        if (largestTexture != null) {
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[index]);
-            bitmap = BitmapFactory.decodeFile(largestTexture.path, options);
-            createTextureFromBitmap(bitmap);
-            largestTexture.id = textureIds[index];
-            largestTexture.index = GLES20.GL_TEXTURE0 + index;
-            Log.e(TAG, "created texture id=" + largestTexture.id
-                    + " index=" + largestTexture.index
-                    + " path=" + largestTexture.path);
-            index++;
-        }
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[index]);
+        Bitmap bitmap = BitmapFactory.decodeFile(largestTexture.path, options);
+        createTextureFromBitmap(bitmap);
+        largestTexture.id = textureIds[index];
+        largestTexture.index = GLES20.GL_TEXTURE0 + index;
+        Log.e(TAG, "created texture id=" + largestTexture.id
+                + " index=" + largestTexture.index
+                + " path=" + largestTexture.path);
+        index++;
         options.inBitmap = bitmap;
         for (GLView view : views) {
             texture = view.getTexture();
@@ -121,13 +123,14 @@ public class Utils {
                 index++;
             }
         }
+        bitmap.recycle();
     }
 
     public static void createTextureFromBitmap(Bitmap bitmap) {
 //        int[] textures = new int[1];
 //        GLES20.glGenTextures(textures.length, textures, 0);
 //        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
-//        GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
+        GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
                 GLES20.GL_LINEAR);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,

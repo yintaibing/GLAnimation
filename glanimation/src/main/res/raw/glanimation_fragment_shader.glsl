@@ -8,6 +8,5 @@ varying vec2 varying_texture_coord;// 纹理插值坐标
 uniform sampler2D uniform_texture;// 纹理对象
 uniform vec4 uniform_multiply_color;
 void main() {
-    //gl_FragColor = uniform_multiply_color * texture2D(uniform_texture, varying_texture_coord);
-    gl_FragColor = texture2D(uniform_texture, varying_texture_coord);
+    gl_FragColor = uniform_multiply_color * texture2D(uniform_texture, varying_texture_coord);
 }

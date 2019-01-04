@@ -6,7 +6,6 @@ varying vec2 varying_texture_coord;// 纹理插值坐标
 uniform mat4 uniform_mvp_matrix;// 变换矩阵
 
 void main() {
-    //vColor = aColor;
     varying_texture_coord = attribute_texture_coord;
     gl_Position = uniform_mvp_matrix * attribute_vertex_coord;
 }

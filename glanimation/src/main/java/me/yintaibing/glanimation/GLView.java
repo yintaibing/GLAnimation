@@ -15,7 +15,7 @@ public class GLView {
     private GLLayoutParams mLayoutParams;
     private int mX;
     private int mY;
-    private int mZ;
+    private float mZ;
     private int mMeasuredWidth;
     private int mMeasuredHeight;
     private boolean mNeedRelayout = true;
@@ -133,11 +133,11 @@ public class GLView {
         switch (mLayoutParams.gravity & Gravity.VERTICAL_GRAVITY_MASK) {
             case Gravity.TOP:
             default:
-                mY = margin[1];
+                mY = parentHeight - mMeasuredHeight - margin[1];
                 break;
 
             case Gravity.BOTTOM:
-                mY = parentHeight - mMeasuredHeight - margin[3];
+                mY = margin[3];
                 break;
 
             case Gravity.CENTER_VERTICAL:
@@ -218,31 +218,29 @@ public class GLView {
     }
 
     public static float[] getVertexCoordArray(int parentWidth, int parentHeight,
-                                              int x, int y, int z, int width, int height) {
-        /*
-         * OpenGL坐标系原点在(parentWidth/2, parentHeight/2)处，且y轴向上，
-         * 相当于坐标反向平移父布局长宽各一半，然后y值取反
-         */
-        float offsetX = parentWidth * -0.5f;
-        float offsetY = parentHeight * -0.5f;
-
-        // 右上，左上，左下，右下
+                                              int x, int y, float z, int width, int height) {
         float[] vertices = {
-                x + width + offsetX, y + offsetY, z,
-                x + offsetX, y + offsetY, z,
-                x + offsetX, y + height + offsetY, z,
-                x + width + offsetX, y + height + offsetY, z
+                x + width,  y + height, z,// 右上
+                x + width,  y,          z,// 右下
+                x,          y,          z,// 左下
+                x,          y + height, z // 左上
         };
+        /*
+         * 上面是绝对坐标，参考系原点在屏幕左下角。OpenGL的标准化设备坐标（NDC），原点在屏幕中央。
+         * 需要先平移-0.5*parentSize，然后除以0.5*parentSize，将坐标范围转到[-1,1]范围内。
+         */
+        float offsetX = parentWidth * 0.5f;
+        float offsetY = parentHeight * 0.5f;
         for (int i = 0; i < vertices.length; i++) {
             switch (i % 3) {
                 case 0:
                     // x
-                    vertices[i] /= Math.abs(offsetX);
+                    vertices[i] = (vertices[i] - offsetX) / offsetX;
                     break;
 
                 case 1:
                     // y
-                    vertices[i] /= offsetY;
+                    vertices[i] = (vertices[i] - offsetY) / offsetY;
                     break;
             }
         }
@@ -256,6 +254,6 @@ public class GLView {
         public int height;
         public float heightRatio;
         public int[] margin;
-        public int z;
+        public float z;
     }
 }
