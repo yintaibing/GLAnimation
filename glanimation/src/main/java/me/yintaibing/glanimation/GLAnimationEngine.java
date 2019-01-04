@@ -81,7 +81,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 
         // depth testing
-//        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
         // load textures
         Utils.loadTextures(mViews);
@@ -106,8 +106,8 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         }
 
         // clear
-        GLES20.glClearColor(1f, 1f, 1f, 1f);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT/* | GLES20.GL_DEPTH_BUFFER_BIT*/);// 深度是不变的
+        GLES20.glClearColor(0.8f, 0.8f, 0.9f, 1f);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);// 深度是不变的
 
         // texture vertex index
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_TEXTURE_VERTEX);
@@ -132,6 +132,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
 
             // mvp matrix
             Matrix.setIdentityM(mViewMatrix, 0);
+            Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f);
             Matrix.setIdentityM(mProjectionMatrix, 0);
             float aspectRatio = Math.max(mWidth, mHeight) / Math.min(mWidth, mHeight);
             if (mWidth > mHeight) {

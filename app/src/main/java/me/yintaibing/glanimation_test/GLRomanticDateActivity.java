@@ -53,7 +53,7 @@ public class GLRomanticDateActivity extends Activity {
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
         lp.widthRatio = 1.0f;
         lp.heightRatio = 0.5f;
-//        lp.z = 0.5f;
+        lp.z = 0.2f;
         lp.gravity = Gravity.BOTTOM;
         flower.setLayoutParams(lp);
 
@@ -77,7 +77,7 @@ public class GLRomanticDateActivity extends Activity {
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
         lp.widthRatio = 0.5f;
         lp.heightRatio = 0.5f;
-//        lp.z = 0.5f;
+        lp.z = 0.5f;
         lp.gravity = Gravity.CENTER_VERTICAL;
         leftHand.setLayoutParams(lp);
 
@@ -101,7 +101,7 @@ public class GLRomanticDateActivity extends Activity {
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
         lp.widthRatio = 0.5f;
         lp.heightRatio = 0.5f;
-//        lp.z = 0.5f;
+        lp.z = 0.8f;
         lp.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
         rightHand.setLayoutParams(lp);
 
