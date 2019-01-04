@@ -61,8 +61,8 @@ public class GLRomanticDateActivity extends Activity {
         flower.setTexture(texture);
 
         GLAnimation animation = new GLTranslateAnimation(
-                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, -1f,
-                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
+                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f,
+                GLAnimation.RELATIVE_TO_SELF, -1f, GLAnimation.RELATIVE_TO_SELF, 0f);
         animation.setDuration(2000L);
         animation.setFillBefore(true);
         animation.setFillAfter(true);

@@ -20,14 +20,14 @@ public class GLTranslateAnimation extends GLAnimation {
     private float mToXDelta;
     private float mToYDelta;
 
-    public GLTranslateAnimation(int fromXType, float fromXValue, int fromYType, float fromYValue,
-                                int toXType, float toXValue, int toYType, float toYValue) {
+    public GLTranslateAnimation(int fromXType, float fromXValue, int toXType, float toXValue,
+                                int fromYType, float fromYValue, int toYType, float toYValue) {
         mFromXType = fromXType;
         mFromXValue = fromXValue;
-        mFromYType = fromYType;
-        mFromYValue = fromYValue;
         mToXType = toXType;
         mToXValue = toXValue;
+        mFromYType = fromYType;
+        mFromYValue = fromYValue;
         mToYType = toYType;
         mToYValue = toYValue;
     }
