@@ -36,8 +36,9 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
     private GLSurfaceViewExt mGLSurfaceViewExt;
     private List<GLView> mViews;
     private List<GLAnimationUpdater> mUpdaters;
-    private float mWidth;
-    private float mHeight;
+    private int mWidth;
+    private int mHeight;
+    private float[] mProjectionSpace = new float[6];// 视景体
     private boolean mIsPrepared;
 
     private GLProgram mProgram;
@@ -134,12 +135,9 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             Matrix.setIdentityM(mViewMatrix, 0);
             Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f);
             Matrix.setIdentityM(mProjectionMatrix, 0);
-            float aspectRatio = Math.max(mWidth, mHeight) / Math.min(mWidth, mHeight);
-            if (mWidth > mHeight) {
-                Matrix.orthoM(mProjectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, 0f, 1f);
-            } else {
-                Matrix.orthoM(mProjectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, 0f, 1f);
-            }
+            Matrix.orthoM(mProjectionMatrix, 0, mProjectionSpace[0], mProjectionSpace[1],
+                    mProjectionSpace[2], mProjectionSpace[3],
+                    mProjectionSpace[4], mProjectionSpace[5]);
             Matrix.setIdentityM(mMVPMatrix, 0);
             Matrix.multiplyMM(mMVPMatrix, 0, view.getModelMatrix(), 0, mMVPMatrix, 0);
             Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mMVPMatrix, 0);
@@ -168,11 +166,27 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             return;
         }
 
+        // projection space
+        float aspectRatio = (float) Math.max(mWidth, mHeight) / (float) Math.min(mWidth, mHeight);
+        if (mWidth > mHeight) {
+            mProjectionSpace[0] = -aspectRatio;
+            mProjectionSpace[1] = aspectRatio;
+            mProjectionSpace[2] = -1f;
+            mProjectionSpace[3] = 1f;
+        } else {
+            mProjectionSpace[0] = -1f;
+            mProjectionSpace[1] = 1f;
+            mProjectionSpace[2] = -aspectRatio;
+            mProjectionSpace[3] = aspectRatio;
+        }
+        mProjectionSpace[4] = 0f;
+        mProjectionSpace[5] = 1f;
+
         // measure, layout and create updaters
         mUpdaters = new ArrayList<>(mViews.size());
         for (GLView view : mViews) {
-            view.onMeasure((int) mWidth, (int) mHeight);
-            view.onLayout(0, 0, (int) mWidth, (int) mHeight);
+            view.onMeasure(mWidth, mHeight);
+            view.onLayout(0, 0, mWidth, mHeight);
             if (view.getAnimation() != null) {
                 GLAnimationUpdater updater = new GLAnimationUpdater(view, view.getAnimation());
                 mUpdaters.add(updater);
@@ -214,11 +228,11 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         }
 
         // viewport
-        GLES20.glViewport(0, 0, (int) mWidth, (int) mHeight);
+        GLES20.glViewport(0, 0, mWidth, mHeight);
 
         // prepare animation and delay start
         for (GLAnimationUpdater updater : mUpdaters) {
-            updater.prepare((int) mWidth, (int) mHeight);
+            updater.prepare(mWidth, mHeight);
         }
         mGLSurfaceViewExt.postDelayed(new Runnable() {
             @Override

@@ -96,9 +96,9 @@ public class GLView {
         }
 
         int[] margin = getMargin();
-        mMeasuredWidth = measureSize(parentWidth, mLayoutParams.width, mLayoutParams.widthRatio)
+        mMeasuredWidth = measureSize(mLayoutParams.width, mLayoutParams.widthRatio, parentWidth)
                 - margin[0] - margin[2];
-        mMeasuredHeight = measureSize(parentHeight, mLayoutParams.height, mLayoutParams.heightRatio)
+        mMeasuredHeight = measureSize(mLayoutParams.height, mLayoutParams.heightRatio, parentHeight)
                 - margin[1] - margin[3];
 
         Log.e(TAG, "name=" + mName
@@ -211,7 +211,7 @@ public class GLView {
         return margin;
     }
 
-    private static int measureSize(int parentSize, int paramsExactSize, float paramsSizeRatio) {
+    private static int measureSize(int paramsExactSize, float paramsSizeRatio, int parentSize) {
         return paramsExactSize > 0 ? paramsExactSize
                 : paramsSizeRatio > 0 ? (int) (parentSize * paramsSizeRatio)
                 : 0;
