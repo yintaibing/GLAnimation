@@ -21,6 +21,7 @@ public class GLRomanticDateActivity extends Activity {
     String FILE_RIGHT_HAND = DIR + "icon_live_video_romantic_date_right_hand.png";
 
     GLSurfaceViewExt glSurfaceViewExt;
+    private List<GLView> mGLViews;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,19 +38,21 @@ public class GLRomanticDateActivity extends Activity {
     }
 
     private void romanticDate() {
-        List<GLView> views = new ArrayList<>();
+        mGLViews = new ArrayList<>();
 
-        addFlower(views);
+        addFlower();
+        addLeftHand();
+        addRightHand();
 
-        glSurfaceViewExt.render(views);
+        glSurfaceViewExt.render(mGLViews);
     }
 
-    private void addFlower(List<GLView> views) {
+    private void addFlower() {
         GLView flower = new GLView("flower");
 
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
-        lp.widthRatio = 0.25f;
-        lp.heightRatio = 0.25f;
+        lp.widthRatio = 1.0f;
+        lp.heightRatio = 0.5f;
 //        lp.z = 0.5f;
         lp.gravity = Gravity.BOTTOM;
         flower.setLayoutParams(lp);
@@ -58,13 +61,61 @@ public class GLRomanticDateActivity extends Activity {
         flower.setTexture(texture);
 
         GLAnimation animation = new GLTranslateAnimation(
-                GLAnimation.RELATIVE_TO_PARENT, 1f, GLAnimation.RELATIVE_TO_PARENT, 1f,
-                GLAnimation.RELATIVE_TO_PARENT, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
+                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, -1f,
+                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
         animation.setDuration(2000L);
         animation.setFillBefore(true);
         animation.setFillAfter(true);
         flower.setAnimation(animation);
 
-        views.add(flower);
+        mGLViews.add(flower);
+    }
+
+    private void addLeftHand() {
+        GLView leftHand = new GLView("leftHand");
+
+        GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
+        lp.widthRatio = 0.5f;
+        lp.heightRatio = 0.5f;
+//        lp.z = 0.5f;
+        lp.gravity = Gravity.CENTER_VERTICAL;
+        leftHand.setLayoutParams(lp);
+
+        GLTexture texture = new GLTexture(FILE_LEFT_HAND);
+        leftHand.setTexture(texture);
+
+        GLAnimation animation = new GLTranslateAnimation(
+                GLAnimation.RELATIVE_TO_SELF, -1f, GLAnimation.RELATIVE_TO_SELF, 0f,
+                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
+        animation.setDuration(2000L);
+        animation.setFillBefore(true);
+        animation.setFillAfter(true);
+        leftHand.setAnimation(animation);
+
+        mGLViews.add(leftHand);
+    }
+
+    private void addRightHand() {
+        GLView rightHand = new GLView("rightHand");
+
+        GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
+        lp.widthRatio = 0.5f;
+        lp.heightRatio = 0.5f;
+//        lp.z = 0.5f;
+        lp.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+        rightHand.setLayoutParams(lp);
+
+        GLTexture texture = new GLTexture(FILE_RIGHT_HAND);
+        rightHand.setTexture(texture);
+
+        GLAnimation animation = new GLTranslateAnimation(
+                GLAnimation.RELATIVE_TO_SELF, 1f, GLAnimation.RELATIVE_TO_SELF, 0f,
+                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
+        animation.setDuration(2000L);
+        animation.setFillBefore(true);
+        animation.setFillAfter(true);
+        rightHand.setAnimation(animation);
+
+        mGLViews.add(rightHand);
     }
 }

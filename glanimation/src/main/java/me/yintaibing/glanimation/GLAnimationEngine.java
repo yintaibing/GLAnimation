@@ -121,7 +121,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             if (texture != null && texture.isValid()) {
                 GLES20.glActiveTexture(texture.index);
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.id);
-                GLES20.glUniform1i(mProgram.getUniform_texture(), 0);
+                GLES20.glUniform1i(mProgram.getUniform_texture(), texture.index - GLES20.GL_TEXTURE0);
             }
 
             // vertex coord
