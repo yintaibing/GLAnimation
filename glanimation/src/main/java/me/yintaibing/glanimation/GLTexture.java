@@ -8,6 +8,9 @@ public class GLTexture {
     public int id = -1;
     public int index;
 
+    public int id_alpha = -1;
+    public int index_alpha;
+
     public GLTexture(String path) {
         this.path = path;
     }

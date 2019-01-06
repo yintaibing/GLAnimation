@@ -17,6 +17,7 @@ import me.yintaibing.glanimation.GLView;
 public class GLRomanticDateActivity extends Activity {
     String DIR = "sdcard/com.zhenai.android/file/gift/3/";
     String FILE_FLOWER = DIR + "bg_live_video_romantic_date_flower.png";
+    String FILE_FLOWER_ETC = DIR + "bg_live_video_romantic_date_flower.pkm";
     String FILE_LEFT_HAND = DIR + "icon_live_video_romantic_date_left_hand.png";
     String FILE_RIGHT_HAND = DIR + "icon_live_video_romantic_date_right_hand.png";
 
@@ -41,8 +42,8 @@ public class GLRomanticDateActivity extends Activity {
         mGLViews = new ArrayList<>();
 
         addFlower();
-        addLeftHand();
-        addRightHand();
+//        addLeftHand();
+//        addRightHand();
 
         glSurfaceViewExt.render(mGLViews);
     }
@@ -57,7 +58,7 @@ public class GLRomanticDateActivity extends Activity {
         lp.gravity = Gravity.BOTTOM;
         flower.setLayoutParams(lp);
 
-        GLTexture texture = new GLTexture(FILE_FLOWER);
+        GLTexture texture = new GLTexture(FILE_FLOWER_ETC);
         flower.setTexture(texture);
 
         GLAnimation animation = new GLTranslateAnimation(

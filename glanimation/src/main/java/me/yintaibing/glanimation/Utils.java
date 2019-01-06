@@ -3,13 +3,17 @@ package me.yintaibing.glanimation;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.opengl.ETC1;
+import android.opengl.ETC1Util;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -126,7 +130,7 @@ public class Utils {
         bitmap.recycle();
     }
 
-    public static void createTextureFromBitmap(Bitmap bitmap) {
+    private static void createTextureFromBitmap(Bitmap bitmap) {
 //        int[] textures = new int[1];
 //        GLES20.glGenTextures(textures.length, textures, 0);
 //        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
@@ -144,5 +148,55 @@ public class Utils {
 //        bitmap.recycle();
 
 //        return textures[0];
+    }
+
+    public static void loadTexturesETC(List<GLView> views) {
+        if (views == null || views.isEmpty()) {
+            return;
+        }
+        try {
+            GLTexture texture = views.get(0).getTexture();
+            int[] textureIds = new int[1];
+            GLES20.glGenTextures(textureIds.length, textureIds, 0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[0]);
+            createETC1Texture(texture.path);
+            texture.id = textureIds[0];
+            texture.index = GLES20.GL_TEXTURE0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void createETC1Texture(String path) {
+        try {
+            GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
+                    GLES20.GL_LINEAR);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
+                    GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
+                    GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
+                    GLES20.GL_CLAMP_TO_EDGE);
+
+            InputStream in = new FileInputStream(path);
+            ETC1Util.ETC1Texture etc1Texture = ETC1Util.createTexture(in);
+            int width = etc1Texture.getWidth();
+            int height = etc1Texture.getHeight();
+            Buffer data = etc1Texture.getData();
+            int imageSize = data.remaining();
+
+            GLES20.glCompressedTexImage2D(GLES20.GL_TEXTURE_2D, 0, ETC1.ETC1_RGB8_OES,
+                    width, height, 0, imageSize, data);
+//            GLES20.glCompressedTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, height/2, width, height/2,
+//                    ETC1.ETC1_RGB8_OES, imageSize/2,data);
+
+            Log.e(TAG, "created etc texture, width=" + width
+                    + " height=" + height
+                    + " imageSize=" + imageSize
+                    + " path=" + path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

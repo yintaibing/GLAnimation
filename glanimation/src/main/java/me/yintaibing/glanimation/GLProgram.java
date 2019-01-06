@@ -11,6 +11,7 @@ public class GLProgram {
 
     private int attribute_vertex_coord;
     private int attribute_texture_coord;
+    private int attribute_texture_coord_alpha;
     private int uniform_mvp_matrix;
     private int uniform_texture;
     private int uniform_multiply_color;
@@ -29,6 +30,8 @@ public class GLProgram {
                 "attribute_vertex_coord");
         attribute_texture_coord = GLES20.glGetAttribLocation(mProgramHandle,
                 "attribute_texture_coord");
+        attribute_texture_coord_alpha = GLES20.glGetAttribLocation(mProgramHandle,
+                "attribute_texture_coord_alpha");
         uniform_mvp_matrix = GLES20.glGetUniformLocation(mProgramHandle,
                 "uniform_mvp_matrix");
         uniform_texture  = GLES20.glGetUniformLocation(mProgramHandle,
@@ -39,6 +42,7 @@ public class GLProgram {
         Log.e(TAG, "program linked, mProgramHandle=" + mProgramHandle
                 + " vertex_coord=" + attribute_vertex_coord
                 + " texture_coord=" + attribute_texture_coord
+                + " texture_coord_alpha" + attribute_texture_coord_alpha
                 + " mvp=" + uniform_mvp_matrix
                 + " texture=" + uniform_texture
                 + " multiply_color=" + uniform_multiply_color);
@@ -63,6 +67,10 @@ public class GLProgram {
 
     public int getUniform_texture() {
         return uniform_texture;
+    }
+
+    public int getAttribute_texture_coord_alpha() {
+        return attribute_texture_coord_alpha;
     }
 
     public int getUniform_multiply_color() {
