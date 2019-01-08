@@ -27,7 +27,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
     private static final float[] ARRAY_TEXTURE_VERTEX = {
             // 1f, 1f, 1f, 0.5f, 0f, 0.5f, 0f, 1f
             // OpenGL坐标与纹理坐标Y轴相反，所以坐标y取反
-            1f, 0f, 1f, 0.5f, 0f, 0.5f, 0f, 0f
+            1f, 0f, 1f, 1f, 0f, 1f, 0f, 0f
     };
     // 纹理顶点绘制顺序索引缓冲
     private static int BUFFER_TEXTURE_VERTEX;
@@ -73,6 +73,10 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         Log.e(TAG, "onSurfaceCreated");
 
+//        String glExt = gl.glGetString(GL10.GL_EXTENSIONS);
+//        String glExt = GLES20.glGetString(GLES20.GL_EXTENSIONS);
+//        Log.e(TAG, "glExt=" + glExt);
+
         // compileGLProgram();
         mProgram = new GLProgram(mGLSurfaceViewExt.getContext());
         mProgram.use();
@@ -90,8 +94,8 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
         // load textures
-//        Utils.loadTextures(mViews);
-        Utils.loadTexturesETC(mViews);
+        Utils.loadTextures(mViews);
+//        Utils.loadTexturesETC(mViews);
     }
 
     @Override
@@ -123,10 +127,10 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         GLES20.glEnableVertexAttribArray(mProgram.getAttribute_texture_coord());
 
         // texture alpha vertex
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_TEXTURE_ALPHA_VERTEX);
-        GLES20.glVertexAttribPointer(mProgram.getAttribute_texture_coord_alpha(), 2, GLES20.GL_FLOAT,
-                false, 0, 0);
-        GLES20.glEnableVertexAttribArray(mProgram.getAttribute_texture_coord_alpha());
+//        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_TEXTURE_ALPHA_VERTEX);
+//        GLES20.glVertexAttribPointer(mProgram.getAttribute_texture_coord_alpha(), 2, GLES20.GL_FLOAT,
+//                false, 0, 0);
+//        GLES20.glEnableVertexAttribArray(mProgram.getAttribute_texture_coord_alpha());
 
         for (GLView view : mViews) {
             // texture
@@ -190,6 +194,8 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             mProjectionSpace[1] = 1f;
             mProjectionSpace[2] = -aspectRatio;
             mProjectionSpace[3] = aspectRatio;
+//            mProjectionSpace[2] = -1;
+//            mProjectionSpace[3] = 1;
         }
         mProjectionSpace[4] = 0f;
         mProjectionSpace[5] = 1f;

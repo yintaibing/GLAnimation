@@ -41,7 +41,7 @@ public class GLTranslateAnimation extends GLAnimation {
 
         if (mFillBefore) {
             if (mFromXDelta != 0f || mFromYDelta != 0f) {
-                translate(0);
+                translate(0f);
             }
         }
     }
@@ -67,6 +67,6 @@ public class GLTranslateAnimation extends GLAnimation {
 //                + " tx=" + tx
 //                + " dy=" + dy
 //                + " ty=" + ty);
-        Matrix.translateM(mMatrix, 0, tx, ty, 0);
+        Matrix.translateM(mMatrix, 0, tx, ty, 0f);
     }
 }

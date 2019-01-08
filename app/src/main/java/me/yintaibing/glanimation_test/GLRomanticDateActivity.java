@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.yintaibing.glanimation.GLAnimation;
+import me.yintaibing.glanimation.GLRotateAnimation;
 import me.yintaibing.glanimation.GLSurfaceViewExt;
 import me.yintaibing.glanimation.GLTexture;
 import me.yintaibing.glanimation.GLTranslateAnimation;
@@ -41,8 +42,8 @@ public class GLRomanticDateActivity extends Activity {
     private void romanticDate() {
         mGLViews = new ArrayList<>();
 
-        addFlower();
-//        addLeftHand();
+//        addFlower();
+        addLeftHand();
 //        addRightHand();
 
         glSurfaceViewExt.render(mGLViews);
@@ -58,7 +59,7 @@ public class GLRomanticDateActivity extends Activity {
         lp.gravity = Gravity.BOTTOM;
         flower.setLayoutParams(lp);
 
-        GLTexture texture = new GLTexture(FILE_FLOWER_ETC);
+        GLTexture texture = new GLTexture(FILE_FLOWER);
         flower.setTexture(texture);
 
         GLAnimation animation = new GLTranslateAnimation(
@@ -77,7 +78,7 @@ public class GLRomanticDateActivity extends Activity {
 
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
         lp.width = 400;
-        lp.height = 400;
+        lp.height = 200;
         lp.z = 0.5f;
         lp.gravity = Gravity.CENTER_VERTICAL;
         leftHand.setLayoutParams(lp);
@@ -85,10 +86,13 @@ public class GLRomanticDateActivity extends Activity {
         GLTexture texture = new GLTexture(FILE_LEFT_HAND);
         leftHand.setTexture(texture);
 
-        GLAnimation animation = new GLTranslateAnimation(
-                GLAnimation.RELATIVE_TO_SELF, -1f, GLAnimation.RELATIVE_TO_SELF, 0f,
-                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
-        animation.setDuration(2000L);
+//        GLAnimation animation = new GLTranslateAnimation(
+//                GLAnimation.RELATIVE_TO_SELF, -1f, GLAnimation.RELATIVE_TO_SELF, 0f,
+//                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
+        GLAnimation animation = new GLRotateAnimation(0f, 360f,
+                GLAnimation.RELATIVE_TO_SELF, 0.5f,
+                GLAnimation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(4000L);
         animation.setFillBefore(true);
         animation.setFillAfter(true);
         leftHand.setAnimation(animation);
