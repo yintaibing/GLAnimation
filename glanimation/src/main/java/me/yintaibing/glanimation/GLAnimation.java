@@ -1,19 +1,20 @@
 package me.yintaibing.glanimation;
 
 import android.opengl.Matrix;
+import android.support.annotation.CallSuper;
 import android.util.Log;
 
 public abstract class GLAnimation {
     private static final String TAG = "GLAnimation";
 
-    public static final int RELATIVE_TO_PARENT = 0;
-    public static final int RELATIVE_TO_SELF = 1;
+    public static final int RELATIVE_TO_SELF = 0;
+    public static final int RELATIVE_TO_PARENT = 1;
 
     protected float[] mMatrix = new float[16];
-    protected int mParentWidth;
-    protected int mParentHeight;
-    protected int mChildWidth;
-    protected int mChildHeight;
+    //    protected int mParentWidth;
+//    protected int mParentHeight;
+//    protected int mChildWidth;
+//    protected int mChildHeight;
     protected long mDuration;
     protected long mStartOffset;
     protected boolean mFillBefore;
@@ -51,16 +52,10 @@ public abstract class GLAnimation {
         return mMatrix;
     }
 
-    void prepare(int parentWith, int parentHeight, int childWidth, int childHeight) {
-        mParentWidth = parentWith;
-        mParentHeight = parentHeight;
-        mChildWidth = childWidth;
-        mChildHeight = childHeight;
+    @CallSuper
+    public void prepare(int parentWidth, int parentHeight, GLView view) {
         resetIdentity();
-        prepare();
     }
-
-    protected abstract void prepare();
 
     void updateProgress(float progress) {
         if (progress >= 1f) {
@@ -76,13 +71,29 @@ public abstract class GLAnimation {
         Matrix.setIdentityM(mMatrix, 0);
     }
 
-    protected static float resolveSize(int type, float value, int size, int parentSize) {
+    /**
+     * 计算动画的尺寸
+     *
+     * @param type       尺寸类型。{@link #RELATIVE_TO_PARENT} and {@link #RELATIVE_TO_SELF}
+     * @param value      尺寸值
+     * @param size       展示动画的GLView的相应尺寸
+     * @param parentSize 父SurfaceView的相应尺寸
+     * @return 动画尺寸
+     */
+    protected float resolveSize(int type, float value, int size, int parentSize) {
         switch (type) {
-            case RELATIVE_TO_SELF:
-                return size * value;
             case RELATIVE_TO_PARENT:
-            default:
+//                return Utils.toWorldCoord(parentSize * value - base, parentSize, originated);
                 return parentSize * value;
+
+            case RELATIVE_TO_SELF:
+            default:
+//                return Utils.toWorldCoord(size * value, parentSize, originated);
+                return size * value;
         }
+    }
+
+    protected boolean isRelativeToParent(int type) {
+        return type == RELATIVE_TO_PARENT;
     }
 }

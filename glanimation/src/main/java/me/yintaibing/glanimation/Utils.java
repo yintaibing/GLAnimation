@@ -69,6 +69,40 @@ public class Utils {
         return null;
     }
 
+    /**
+     * 将android坐标系映射到OpenGL标准坐标系
+     *
+     * @param androidCoord
+     * @param parentSize
+     * @param originated
+     * @return
+     */
+    public static float toWorldCoord(float androidCoord, float parentSize, boolean originated) {
+        float worldCoord = androidCoord / (parentSize * 0.5f);
+        if (!originated) {
+            worldCoord -= 1f;
+        }
+        return worldCoord;
+    }
+
+    public static String arrayToString(float[] a, int dimension) {
+        StringBuilder s = new StringBuilder();
+        s.append("{");
+        if (a != null) {
+            for (int i = 0; i < a.length; i++) {
+                s.append(a[i]);
+                if (i != a.length - 1) {
+                    s.append(",");
+                    if (dimension > 0 && (i + 1) % dimension == 0) {
+                        s.append("  ");
+                    }
+                }
+            }
+        }
+        s.append("}");
+        return s.toString();
+    }
+
     public static void loadTextures(List<GLView> views) {
         if (views == null || views.isEmpty()) {
             return;

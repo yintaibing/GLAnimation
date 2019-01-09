@@ -35,6 +35,14 @@ public class GLView {
         this.mName = mName;
     }
 
+    public int getX() {
+        return mX;
+    }
+
+    public int getY() {
+        return mY;
+    }
+
     public int getMeasuredWidth() {
         return mMeasuredWidth;
     }
@@ -60,6 +68,10 @@ public class GLView {
             count++;
         }
         return count;
+    }
+
+    public float[] getArrayVertexCoord() {
+        return mArrayVertexCoord;
     }
 
     public int getBufferVertexCoord() {
@@ -95,11 +107,10 @@ public class GLView {
             return;
         }
 
-        int[] margin = getMargin();
         mMeasuredWidth = measureSize(mLayoutParams.width, mLayoutParams.widthRatio, parentWidth)
-                - margin[0] - margin[2];
+                - mLayoutParams.leftMargin - mLayoutParams.rightMargin;
         mMeasuredHeight = measureSize(mLayoutParams.height, mLayoutParams.heightRatio, parentHeight)
-                - margin[1] - margin[3];
+                - mLayoutParams.topMargin - mLayoutParams.bottomMargin;
 
         Log.e(TAG, "name=" + mName
                 + " onMeasure, mMeasuredWidth=" + mMeasuredWidth
@@ -113,17 +124,16 @@ public class GLView {
 
         int parentWidth = Math.abs(right - left);
         int parentHeight = Math.abs(bottom - top);
-        int[] margin = getMargin();
         switch (mLayoutParams.gravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
             case Gravity.START:
             case Gravity.LEFT:
             default:
-                mX = margin[0];
+                mX = mLayoutParams.leftMargin;
                 break;
 
             case Gravity.END:
             case Gravity.RIGHT:
-                mX = parentWidth - mMeasuredWidth - margin[2];
+                mX = parentWidth - mMeasuredWidth - mLayoutParams.rightMargin;
                 break;
 
             case Gravity.CENTER_HORIZONTAL:
@@ -133,11 +143,11 @@ public class GLView {
         switch (mLayoutParams.gravity & Gravity.VERTICAL_GRAVITY_MASK) {
             case Gravity.TOP:
             default:
-                mY = parentHeight - mMeasuredHeight - margin[1];
+                mY = parentHeight - mMeasuredHeight - mLayoutParams.topMargin;
                 break;
 
             case Gravity.BOTTOM:
-                mY = margin[3];
+                mY = mLayoutParams.bottomMargin;
                 break;
 
             case Gravity.CENTER_VERTICAL:
@@ -145,27 +155,12 @@ public class GLView {
                 break;
         }
         mZ = mLayoutParams.z;
-        mArrayVertexCoord = getVertexCoordArray(parentWidth, parentHeight,
-                mX, mY, mZ, mMeasuredWidth, mMeasuredHeight);
+        mArrayVertexCoord = createVertexCoordArray(parentWidth, parentHeight);
 
         Log.e(TAG, "name=" + mName
                 + " onLayout, "
                 +" mX=" + mX + " mY=" + mY + " mZ=" + mZ
-                + " vertexCoord=" + vertexCoordStr());
-    }
-
-    private String vertexCoordStr() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        for (int i = 0; i < mArrayVertexCoord.length; i++) {
-            sb.append(mArrayVertexCoord[i]);
-            sb.append(",");
-            if (i > 0 && (i + 1) % 3 == 0) {
-                sb.append("  ");
-            }
-        }
-        sb.append("}");
-        return sb.toString();
+                + " vertexCoord=" + Utils.arrayToString(mArrayVertexCoord, 3));
     }
 
     public int saveBuffers(int[] buffers, int bufferIndex) {
@@ -192,55 +187,33 @@ public class GLView {
 //        GLES20.glEnableVertexAttribArray(engine.getAttribute_vertex_coord());
     }
 
-    private int[] getMargin() {
-        int[] margin = new int[4];
-        if (mLayoutParams != null && mLayoutParams.margin != null) {
-            if (mLayoutParams.margin.length > 0) {
-                margin[0] = mLayoutParams.margin[0];
-            }
-            if (mLayoutParams.margin.length > 1) {
-                margin[1] = mLayoutParams.margin[1];
-            }
-            if (mLayoutParams.margin.length > 2) {
-                margin[2] = mLayoutParams.margin[2];
-            }
-            if (mLayoutParams.margin.length > 3) {
-                margin[3] = mLayoutParams.margin[3];
-            }
-        }
-        return margin;
-    }
-
     private static int measureSize(int paramsExactSize, float paramsSizeRatio, int parentSize) {
         return paramsExactSize > 0 ? paramsExactSize
                 : paramsSizeRatio > 0 ? (int) (parentSize * paramsSizeRatio)
                 : 0;
     }
 
-    public static float[] getVertexCoordArray(int parentWidth, int parentHeight,
-                                              int x, int y, float z, int width, int height) {
+    public float[] createVertexCoordArray(int parentWidth, int parentHeight) {
         float[] vertices = {
-                x + width,  y + height, z,// 右上
-                x + width,  y,          z,// 右下
-                x,          y,          z,// 左下
-                x,          y + height, z // 左上
+                mX + mMeasuredWidth,  mY + mMeasuredHeight, mZ,// 右上
+                mX + mMeasuredWidth,  mY,                   mZ,// 右下
+                mX,                   mY,                   mZ,// 左下
+                mX,                   mY + mMeasuredHeight, mZ // 左上
         };
         /*
          * 上面是绝对坐标，参考系原点在屏幕左下角。OpenGL的标准化设备坐标（NDC），原点在屏幕中央。
          * 需要先平移-0.5*parentSize，然后除以0.5*parentSize，将坐标范围转到[-1,1]范围内。
          */
-        float offsetX = parentWidth * 0.5f;
-        float offsetY = parentHeight * 0.5f;
         for (int i = 0; i < vertices.length; i++) {
             switch (i % 3) {
                 case 0:
                     // x
-                    vertices[i] = (vertices[i] - offsetX) / offsetX;
+                    vertices[i] = Utils.toWorldCoord(vertices[i], parentWidth, false);
                     break;
 
                 case 1:
                     // y
-                    vertices[i] = (vertices[i] - offsetY) / offsetY;
+                    vertices[i] = Utils.toWorldCoord(vertices[i], parentHeight, false);
                     break;
             }
         }
@@ -253,7 +226,10 @@ public class GLView {
         public float widthRatio;
         public int height;
         public float heightRatio;
-        public int[] margin;
         public float z;
+        public int leftMargin;
+        public int topMargin;
+        public int rightMargin;
+        public int bottomMargin;
     }
 }

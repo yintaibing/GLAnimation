@@ -23,8 +23,7 @@ public class GLAnimationUpdater {
     }
 
     public void prepare(int parentWidth, int parentHeight) {
-        mAnimation.prepare(parentWidth, parentHeight,
-                mView.getMeasuredWidth(), mView.getMeasuredHeight());
+        mAnimation.prepare(parentWidth, parentHeight, mView);
     }
 
     public void start() {

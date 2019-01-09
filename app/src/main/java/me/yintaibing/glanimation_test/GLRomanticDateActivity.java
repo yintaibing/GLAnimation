@@ -44,7 +44,7 @@ public class GLRomanticDateActivity extends Activity {
 
 //        addFlower();
         addLeftHand();
-//        addRightHand();
+        addRightHand();
 
         glSurfaceViewExt.render(mGLViews);
     }
@@ -77,8 +77,8 @@ public class GLRomanticDateActivity extends Activity {
         GLView leftHand = new GLView("leftHand");
 
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
-        lp.width = 400;
-        lp.height = 200;
+        lp.widthRatio = 0.5f;
+        lp.height = 600;
         lp.z = 0.5f;
         lp.gravity = Gravity.CENTER_VERTICAL;
         leftHand.setLayoutParams(lp);
@@ -90,7 +90,7 @@ public class GLRomanticDateActivity extends Activity {
 //                GLAnimation.RELATIVE_TO_SELF, -1f, GLAnimation.RELATIVE_TO_SELF, 0f,
 //                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
         GLAnimation animation = new GLRotateAnimation(0f, 360f,
-                GLAnimation.RELATIVE_TO_SELF, 0.5f,
+                GLAnimation.RELATIVE_TO_PARENT, 0.75f,
                 GLAnimation.RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(4000L);
         animation.setFillBefore(true);
@@ -104,7 +104,7 @@ public class GLRomanticDateActivity extends Activity {
         GLView rightHand = new GLView("rightHand");
 
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
-        lp.width = 400;
+        lp.widthRatio = 0.5f;
         lp.height = 400;
         lp.z = 0.8f;
         lp.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
@@ -114,7 +114,7 @@ public class GLRomanticDateActivity extends Activity {
         rightHand.setTexture(texture);
 
         GLAnimation animation = new GLTranslateAnimation(
-                GLAnimation.RELATIVE_TO_SELF, 1f, GLAnimation.RELATIVE_TO_SELF, 0f,
+                GLAnimation.RELATIVE_TO_SELF, 1f, GLAnimation.RELATIVE_TO_PARENT, 0f,
                 GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
         animation.setDuration(2000L);
         animation.setFillBefore(true);

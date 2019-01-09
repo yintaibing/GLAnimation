@@ -1,6 +1,10 @@
 package me.yintaibing.glanimation;
 
+import android.util.Log;
+
 public class GLRotateAnimation extends GLAnimation {
+    private static final String TAG = "GLRotateAnimation";
+
     private float mFromDegrees;
     private float mToDegrees;
     private int mPivotXType;
@@ -23,13 +27,19 @@ public class GLRotateAnimation extends GLAnimation {
     }
 
     @Override
-    protected void prepare() {
-        mPivotStart[0] = resolveSize(mPivotXType, mPivotXValue, mChildWidth, mParentWidth);
-        mPivotStart[1] = resolveSize(mPivotYType, mPivotYValue, mChildHeight, mParentHeight);
+    public void prepare(int parentWidth, int parentHeight, GLView view) {
+        super.prepare(parentWidth, parentHeight, view);
+        mPivotStart[0] = Utils.toWorldCoord(resolveSize(mPivotXType, mPivotXValue,
+                view.getMeasuredWidth(), parentWidth, view.getX()), parentWidth, false);
+        mPivotStart[1] = Utils.toWorldCoord(resolveSize(mPivotYType, mPivotYValue,
+                view.getMeasuredHeight(), parentHeight, view.getY()), parentHeight, false);
         mPivotStart[2] = 0f;
+
         mPivotNormalizedVector[0] = 0f;
         mPivotNormalizedVector[1] = 0f;
         mPivotNormalizedVector[2] = 1f;
+
+        Log.e(TAG, "mPivotStart=" + Utils.arrayToString(mPivotStart, 3));
 
         if (mFillBefore) {
             if (mFromDegrees != 0f) {
@@ -40,18 +50,22 @@ public class GLRotateAnimation extends GLAnimation {
 
     @Override
     protected void update(float progress) {
-        resetIdentity();
         rotate(progress);
     }
 
+    private float resolveSize(int type, float value, int size, int parentSize, int base) {
+        float coord = resolveSize(type, value, size, parentSize);
+        if (!isRelativeToParent(type)) {
+            coord += base;
+        }
+        return coord;
+    }
+
     private void rotate(float progress) {
-        resetIdentity();
         float degrees = mFromDegrees;
         if (mFromDegrees != mToDegrees) {
             degrees = mFromDegrees + ((mToDegrees - mFromDegrees) * progress);
         }
-//        Matrix.rotateM(mMatrix, 0, a, 0f, 0f, 1f);
-//        Matrix.setRotateM(mMatrix, 0, a, 0f, 0f, 1f);
         setRotateM(mMatrix, mPivotStart, mPivotNormalizedVector, degrees);
     }
 
@@ -88,8 +102,9 @@ public class GLRotateAnimation extends GLAnimation {
         float cv = c * v;
         float cw = c * w;
 
-        float cos = (float) Math.cos(degrees);
-        float sin = (float) Math.sin(degrees);
+        double radians = (degrees * Math.PI) / 180d;// 角度转弧度
+        float cos = (float) Math.cos(radians);
+        float sin = (float) Math.sin(radians);
 
         rm[0] = uu + (vv + ww) * cos;
         rm[1] = uv * (1f - cos) + w * sin;
