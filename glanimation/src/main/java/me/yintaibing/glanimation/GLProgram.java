@@ -11,10 +11,13 @@ public class GLProgram {
 
     private int attribute_vertex_coord;
     private int attribute_texture_coord;
-    private int attribute_texture_coord_alpha;
     private int uniform_mvp_matrix;
     private int uniform_texture;
-    private int uniform_multiply_color;
+    private int uniform_texture_alpha;
+    private int uniform_color_filter;
+    private int uniform_debug;
+
+    private int uniform_debug_value;
 
     public GLProgram(Context context) {
         int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER,
@@ -30,22 +33,33 @@ public class GLProgram {
                 "attribute_vertex_coord");
         attribute_texture_coord = GLES20.glGetAttribLocation(mProgramHandle,
                 "attribute_texture_coord");
-        attribute_texture_coord_alpha = GLES20.glGetAttribLocation(mProgramHandle,
-                "attribute_texture_coord_alpha");
         uniform_mvp_matrix = GLES20.glGetUniformLocation(mProgramHandle,
                 "uniform_mvp_matrix");
         uniform_texture  = GLES20.glGetUniformLocation(mProgramHandle,
                 "uniform_texture");
-        uniform_multiply_color = GLES20.glGetUniformLocation(mProgramHandle,
-                "uniform_multiply_color");
+        uniform_texture_alpha = GLES20.glGetUniformLocation(mProgramHandle,
+                "uniform_texture_alpha");
+        uniform_color_filter = GLES20.glGetUniformLocation(mProgramHandle,
+                "uniform_color_filter");
+        uniform_debug = GLES20.glGetUniformLocation(mProgramHandle,
+                "uniform_debug");
 
         Log.e(TAG, "program linked, mProgramHandle=" + mProgramHandle
                 + " vertex_coord=" + attribute_vertex_coord
                 + " texture_coord=" + attribute_texture_coord
-                + " texture_coord_alpha" + attribute_texture_coord_alpha
                 + " mvp=" + uniform_mvp_matrix
                 + " texture=" + uniform_texture
-                + " multiply_color=" + uniform_multiply_color);
+                + " texture_alpha" + uniform_texture_alpha
+                + " color_filter=" + uniform_color_filter
+                + " debug=" + uniform_debug);
+    }
+
+    public void setDebug(boolean debug) {
+        uniform_debug_value = debug ? 1 : 0;
+    }
+
+    public void makeDebug() {
+        GLES20.glUniform1i(uniform_debug, uniform_debug_value);
     }
 
     public void use() {
@@ -69,12 +83,12 @@ public class GLProgram {
         return uniform_texture;
     }
 
-    public int getAttribute_texture_coord_alpha() {
-        return attribute_texture_coord_alpha;
+    public int getUniform_texture_alpha() {
+        return uniform_texture_alpha;
     }
 
-    public int getUniform_multiply_color() {
-        return uniform_multiply_color;
+    public int getUniform_color_filter() {
+        return uniform_color_filter;
     }
 
     private static int compileShader(int shaderType, String srcCode) {

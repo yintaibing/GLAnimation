@@ -79,6 +79,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
 
         // compileGLProgram();
         mProgram = new GLProgram(mGLSurfaceViewExt.getContext());
+        mProgram.setDebug(true);
         mProgram.use();
 
         // face-culling
@@ -115,6 +116,8 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             Log.e(TAG, "onDrawFrame, return by no views");
             return;
         }
+
+        mProgram.makeDebug();
 
         // clear
         GLES20.glClearColor(0.8f, 0.8f, 0.9f, 1f);
@@ -161,7 +164,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             GLES20.glUniformMatrix4fv(mProgram.getUniform_mvp_matrix(), 1, false, mMVPMatrix, 0);
 
             // multiply color
-            GLES20.glUniform4f(mProgram.getUniform_multiply_color(), 1f, 1f, 1f, 1f);
+            GLES20.glUniform4fv(mProgram.getUniform_color_filter(), 1, view.getColorFilter(), 0);
 
             // view vertex index
             GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, BUFFER_VERTEX_INDEX);
