@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.yintaibing.glanimation.GLAnimation;
-import me.yintaibing.glanimation.GLRotateAnimation;
+import me.yintaibing.glanimation.GLScaleAnimation;
 import me.yintaibing.glanimation.GLSurfaceViewExt;
 import me.yintaibing.glanimation.GLTexture;
 import me.yintaibing.glanimation.GLTranslateAnimation;
@@ -89,9 +89,11 @@ public class GLRomanticDateActivity extends Activity {
 //        GLAnimation animation = new GLTranslateAnimation(
 //                GLAnimation.RELATIVE_TO_SELF, -1f, GLAnimation.RELATIVE_TO_SELF, 0f,
 //                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
-        GLAnimation animation = new GLRotateAnimation(0f, 360f,
-                GLAnimation.RELATIVE_TO_PARENT, 0.75f,
-                GLAnimation.RELATIVE_TO_SELF, 0.5f);
+//        GLAnimation animation = new GLRotateAnimation(0f, 360f,
+//                GLAnimation.RELATIVE_TO_PARENT, 0.75f,
+//                GLAnimation.RELATIVE_TO_SELF, 0.5f);
+        GLAnimation animation = new GLScaleAnimation(1f, 0f, 1f, 0f,
+                GLAnimation.RELATIVE_TO_PARENT, 1f, GLAnimation.RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(4000L);
         animation.setFillBefore(true);
         animation.setFillAfter(true);
@@ -104,17 +106,17 @@ public class GLRomanticDateActivity extends Activity {
         GLView rightHand = new GLView("rightHand");
 
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
-        lp.widthRatio = 0.5f;
+        lp.widthRatio = 0.3f;
         lp.height = 400;
         lp.z = 0.8f;
-        lp.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+        lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         rightHand.setLayoutParams(lp);
 
         GLTexture texture = new GLTexture(FILE_RIGHT_HAND);
         rightHand.setTexture(texture);
 
         GLAnimation animation = new GLTranslateAnimation(
-                GLAnimation.RELATIVE_TO_SELF, 1f, GLAnimation.RELATIVE_TO_PARENT, 0f,
+                GLAnimation.RELATIVE_TO_SELF, 0.5f, GLAnimation.RELATIVE_TO_SELF, 0f,
                 GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
         animation.setDuration(2000L);
         animation.setFillBefore(true);
