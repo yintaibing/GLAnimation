@@ -28,7 +28,7 @@ public class GLView {
 //    private Buffer mBufferVertexColor;// 顶点颜色缓冲
 
     private float[] mModelMatrix = new float[16];
-    private float[] mColorFilter = {1f, 1f, 1f, 1f};
+    private float[] mColorFilter = Utils.DEFAULT_COLOR_FILTER;
     private GLAnimation mGLAnimation;
     private GLTexture mGLTexture;
 

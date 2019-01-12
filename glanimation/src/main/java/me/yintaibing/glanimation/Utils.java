@@ -233,4 +233,6 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+    public static float[] DEFAULT_COLOR_FILTER = new float[]{1f, 1f, 1f, 1f};// RGBA
 }
