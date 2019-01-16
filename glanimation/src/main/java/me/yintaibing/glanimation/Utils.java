@@ -103,6 +103,10 @@ public class Utils {
         return s.toString();
     }
 
+    public static float[] getDefaultColorFilter() {
+        return new float[]{1f, 1f, 1f, 1f};
+    }
+
     public static void loadTextures(List<GLView> views) {
         if (views == null || views.isEmpty()) {
             return;

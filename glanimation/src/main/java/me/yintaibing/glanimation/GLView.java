@@ -28,7 +28,7 @@ public class GLView {
 //    private Buffer mBufferVertexColor;// 顶点颜色缓冲
 
     private float[] mModelMatrix = new float[16];
-    private float[] mColorFilter = Utils.DEFAULT_COLOR_FILTER;
+//    private float[] mColorFilter = Utils.getDefaultColorFilter();
     private GLAnimation mGLAnimation;
     private GLTexture mGLTexture;
 
@@ -88,8 +88,10 @@ public class GLView {
     }
 
     public float[] getColorFilter() {
-        // TODO handle GLColorFilterAnimation
-        return mColorFilter;
+        if (mGLAnimation != null && mGLAnimation instanceof GLColorFilterAnimation) {
+            return ((GLColorFilterAnimation) mGLAnimation).getColorFilter();
+        }
+        return Utils.getDefaultColorFilter();
     }
 
     public GLAnimation getAnimation() {

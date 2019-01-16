@@ -1,7 +1,7 @@
 package me.yintaibing.glanimation;
 
 public abstract class GLColorFilterAnimation extends GLAnimation {
-    protected float[] mColorFilter = Utils.DEFAULT_COLOR_FILTER;
+    protected float[] mColorFilter = Utils.getDefaultColorFilter();
 
     public GLColorFilterAnimation() {
         super();

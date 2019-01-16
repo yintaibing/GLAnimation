@@ -10,6 +10,16 @@ public class GLAlphaAnimation extends GLColorFilterAnimation {
     }
 
     @Override
+    public void prepare(int parentWidth, int parentHeight, GLView view) {
+        super.prepare(parentWidth, parentHeight, view);
+        if (mFillBefore) {
+            if (mFromAlpha != 1f) {
+                mColorFilter[3] = mFromAlpha;
+            }
+        }
+    }
+
+    @Override
     protected void update(float progress) {
         float alpha = mFromAlpha;
         if (mFromAlpha != mToAlpha) {

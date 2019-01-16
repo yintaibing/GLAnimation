@@ -8,6 +8,7 @@ import android.view.Gravity;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.yintaibing.glanimation.GLAlphaAnimation;
 import me.yintaibing.glanimation.GLAnimation;
 import me.yintaibing.glanimation.GLScaleAnimation;
 import me.yintaibing.glanimation.GLSurfaceViewExt;
@@ -115,9 +116,10 @@ public class GLRomanticDateActivity extends Activity {
         GLTexture texture = new GLTexture(FILE_RIGHT_HAND);
         rightHand.setTexture(texture);
 
-        GLAnimation animation = new GLTranslateAnimation(
-                GLAnimation.RELATIVE_TO_SELF, 0.5f, GLAnimation.RELATIVE_TO_SELF, 0f,
-                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
+//        GLAnimation animation = new GLTranslateAnimation(
+//                GLAnimation.RELATIVE_TO_SELF, 0.5f, GLAnimation.RELATIVE_TO_SELF, 0f,
+//                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
+        GLAnimation animation = new GLAlphaAnimation(0f, 1f);
         animation.setDuration(2000L);
         animation.setFillBefore(true);
         animation.setFillAfter(true);
