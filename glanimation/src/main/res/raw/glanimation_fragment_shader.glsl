@@ -12,7 +12,7 @@ uniform vec4 uniform_color_filter;// 颜色滤镜
 void main() {
     vec4 color = texture2D(uniform_texture, varying_texture_coord);
     if (uniform_debug == 0) {
-        //color.w = texture2D(uniform_texture_alpha, varying_texture_coord).r;
+        color.w = texture2D(uniform_texture_alpha, varying_texture_coord).r;
     } else {
         if (color.w <= 0.2) {
             color = vec4(0.5, 0.5, 0.5, 1);// 灰色背景，用于显示GLView的尺寸

@@ -16,26 +16,30 @@ import javax.microedition.khronos.opengles.GL10;
 public class GLAnimationEngine implements GLSurfaceView.Renderer {
     private static final String TAG = "GLAnimationEngine";
 
-    // 顶点绘制顺序索引数组
+    // 顶点的绘制顺序索引数组
     private static final short[] ARRAY_VERTEX_INDEX = {
             0, 1, 2,
             2, 3, 0
     };
-    // 顶点绘制顺序索引缓冲
+    // ARRAY_VERTEX_INDEX的buffer对象
     private static int BUFFER_VERTEX_INDEX;
-    // 纹理顶点绘制顺序索引数组
-    private static final float[] ARRAY_TEXTURE_VERTEX = {
-            // 1f, 1f, 1f, 0.5f, 0f, 0.5f, 0f, 1f
+
+    // 纹理的顶点绘制索引数组，如果是ETC1纹理，则是非alpha部分
+    private static final float[] ARRAY_NORMAL_TEXTURE_VERTEX = {
+            // 1f, 1f, 1f, 0f, 0f, 0f, 0f, 1f
             // OpenGL坐标与纹理坐标Y轴相反，所以坐标y取反
             1f, 0f, 1f, 1f, 0f, 1f, 0f, 0f
     };
-    // 纹理顶点绘制顺序索引缓冲
-    private static int BUFFER_TEXTURE_VERTEX;
-    private static final float[] ARRAY_TEXTURE_ALPHA_VERTEX = {
-            // 1f, 0.5f, 1f, 0f, 0f, 0f, 0f, 0.5f
-            1f, 0.5f, 1f, 1f, 0f, 1f, 0f, 0.5f
+    // ARRAY_NORMAL_TEXTURE_VERTEX的buffer对象
+    private static int BUFFER_NORMAL_TEXTURE_VERTEX;
+
+    // 当采用ETC1纹理时，alpha部分纹理的顶点绘制索引数组
+    private static final float[] ARRAY_ETC1_ALPHA_TEXTURE_VERTEX = {
+            // 1f, 1f, 1f, 0f, 0f, 0f, 0f, 1f
+            // OpenGL坐标与纹理坐标Y轴相反，所以坐标y取反
+            1f, 0f, 1f, 1f, 0f, 1f, 0f, 0f
     };
-    private static int BUFFER_TEXTURE_ALPHA_VERTEX;
+    private static int BUFFER_ETC1_ALPHA_TEXTURE_VERTEX;
 
 
     private GLSurfaceViewExt mGLSurfaceViewExt;
@@ -95,8 +99,8 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
         // load textures
-        Utils.loadTextures(mViews);
-//        Utils.loadTexturesETC(mViews);
+//        Utils.loadBitmapTextures(mViews);
+        Utils.loadEtc1Textures(mViews);
     }
 
     @Override
@@ -117,20 +121,20 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             return;
         }
 
-        mProgram.makeDebug();
+//        mProgram.makeDebug();
 
         // clear
         GLES20.glClearColor(0.8f, 0.8f, 0.9f, 1f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);// 深度是不变的
 
         // texture vertex
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_TEXTURE_VERTEX);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_NORMAL_TEXTURE_VERTEX);
         GLES20.glVertexAttribPointer(mProgram.getAttribute_texture_coord(), 2, GLES20.GL_FLOAT,
                 false, 0, 0);
         GLES20.glEnableVertexAttribArray(mProgram.getAttribute_texture_coord());
 
         // texture alpha vertex
-//        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_TEXTURE_ALPHA_VERTEX);
+//        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_ETC1_ALPHA_TEXTURE_VERTEX);
 //        GLES20.glVertexAttribPointer(mProgram.getAttribute_texture_coord_alpha(), 2, GLES20.GL_FLOAT,
 //                false, 0, 0);
 //        GLES20.glEnableVertexAttribArray(mProgram.getAttribute_texture_coord_alpha());
@@ -138,10 +142,17 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
         for (GLView view : mViews) {
             // texture
             GLTexture texture = view.getTexture();
-            if (texture != null && texture.isValid()) {
-                GLES20.glActiveTexture(texture.index);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.id);
-                GLES20.glUniform1i(mProgram.getUniform_texture(), texture.index - GLES20.GL_TEXTURE0);
+            if (texture != null) {
+                if (texture.isValid()) {
+                    GLES20.glActiveTexture(texture.index);
+                    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.id);
+                    GLES20.glUniform1i(mProgram.getUniform_texture(), texture.index - GLES20.GL_TEXTURE0);
+                }
+                if (texture.isValidEtcAlpha()) {
+                    GLES20.glActiveTexture(texture.indexEtcAlpha);
+                    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.idEtcAlpha);
+                    GLES20.glUniform1i(mProgram.getUniform_texture_alpha(), texture.indexEtcAlpha - GLES20.GL_TEXTURE0);
+                }
             }
 
             // vertex coord
@@ -234,18 +245,18 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
                     ARRAY_VERTEX_INDEX.length * Utils.BYTES_OF_SHORT,
                     vertexIndexBufferData, GLES20.GL_STATIC_DRAW);
 
-            BUFFER_TEXTURE_VERTEX = buffers[1];
-            FloatBuffer textureVertexBufferData = Utils.toFloatBuffer(ARRAY_TEXTURE_VERTEX);
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_TEXTURE_VERTEX);
+            BUFFER_NORMAL_TEXTURE_VERTEX = buffers[1];
+            FloatBuffer textureVertexBufferData = Utils.toFloatBuffer(ARRAY_NORMAL_TEXTURE_VERTEX);
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_NORMAL_TEXTURE_VERTEX);
             GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER,
                     ARRAY_VERTEX_INDEX.length * Utils.BYTES_OF_FLOAT,
                     textureVertexBufferData, GLES20.GL_STATIC_DRAW);
 
-            BUFFER_TEXTURE_ALPHA_VERTEX = buffers[2];
-            FloatBuffer textureAlphaVertexBufferData = Utils.toFloatBuffer(ARRAY_TEXTURE_ALPHA_VERTEX);
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_TEXTURE_ALPHA_VERTEX);
+            BUFFER_ETC1_ALPHA_TEXTURE_VERTEX = buffers[2];
+            FloatBuffer textureAlphaVertexBufferData = Utils.toFloatBuffer(ARRAY_ETC1_ALPHA_TEXTURE_VERTEX);
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, BUFFER_ETC1_ALPHA_TEXTURE_VERTEX);
             GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER,
-                    ARRAY_TEXTURE_ALPHA_VERTEX.length * Utils.BYTES_OF_FLOAT,
+                    ARRAY_ETC1_ALPHA_TEXTURE_VERTEX.length * Utils.BYTES_OF_FLOAT,
                     textureAlphaVertexBufferData, GLES20.GL_STATIC_DRAW);
 
             int bufferIndex = publicBufferCount;

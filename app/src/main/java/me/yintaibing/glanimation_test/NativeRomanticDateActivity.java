@@ -9,10 +9,10 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 public class NativeRomanticDateActivity extends Activity {
-    String DIR = "sdcard/com.zhenai.android/file/gift/3/";
-    String FILE_FLOWER = DIR + "bg_live_video_romantic_date_flower.png";
-    String FILE_LEFT_HAND = DIR + "icon_live_video_romantic_date_left_hand.png";
-    String FILE_RIGHT_HAND = DIR + "icon_live_video_romantic_date_right_hand.png";
+    String DIR              = "sdcard/com.zhenai.android/file/gift/3/";
+    String FILE_FLOWER      = DIR + "bg_live_video_romantic_date_flower.png";
+    String FILE_LEFT_HAND   = DIR + "icon_live_video_romantic_date_left_hand.png";
+    String FILE_RIGHT_HAND  = DIR + "icon_live_video_romantic_date_right_hand.png";
 
     private ImageView mIvFlower, mIvLeftHand, mIvRightHand;
 

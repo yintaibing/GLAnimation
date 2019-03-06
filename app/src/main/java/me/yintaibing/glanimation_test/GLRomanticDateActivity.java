@@ -8,9 +8,7 @@ import android.view.Gravity;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.yintaibing.glanimation.GLAlphaAnimation;
 import me.yintaibing.glanimation.GLAnimation;
-import me.yintaibing.glanimation.GLScaleAnimation;
 import me.yintaibing.glanimation.GLSurfaceViewExt;
 import me.yintaibing.glanimation.GLTexture;
 import me.yintaibing.glanimation.GLTranslateAnimation;
@@ -18,10 +16,18 @@ import me.yintaibing.glanimation.GLView;
 
 public class GLRomanticDateActivity extends Activity {
     String DIR = "sdcard/com.zhenai.android/file/gift/3/";
-    String FILE_FLOWER = DIR + "bg_live_video_romantic_date_flower.png";
-    String FILE_FLOWER_ETC = DIR + "bg_live_video_romantic_date_flower.pkm";
-    String FILE_LEFT_HAND = DIR + "icon_live_video_romantic_date_left_hand.png";
-    String FILE_RIGHT_HAND = DIR + "icon_live_video_romantic_date_right_hand.png";
+
+    String FILE_FLOWER                  = DIR + "bg_live_video_romantic_date_flower.png";
+    String FILE_FLOWER_ETC              = DIR + "bg_live_video_romantic_date_flower.pkm";
+    String FILE_FLOWER_ETC_ALPHA        = DIR + "bg_live_video_romantic_date_flower_alpha.pkm";
+
+    String FILE_LEFT_HAND               = DIR + "icon_live_video_romantic_date_left_hand.png";
+    String FILE_LEFT_HAND_ETC           = DIR + "icon_live_video_romantic_date_left_hand.pkm";
+    String FILE_LEFT_HAND_ETC_ALPHA     = DIR + "icon_live_video_romantic_date_left_hand_alpha.pkm";
+
+    String FILE_RIGHT_HAND              = DIR + "icon_live_video_romantic_date_right_hand.png";
+    String FILE_RIGHT_HAND_ETC          = DIR + "icon_live_video_romantic_date_right_hand.pkm";
+    String FILE_RIGHT_HAND_ETC_ALPHA    = DIR + "icon_live_video_romantic_date_right_hand_alpha.pkm";
 
     GLSurfaceViewExt glSurfaceViewExt;
     private List<GLView> mGLViews;
@@ -43,7 +49,7 @@ public class GLRomanticDateActivity extends Activity {
     private void romanticDate() {
         mGLViews = new ArrayList<>();
 
-//        addFlower();
+        addFlower();
         addLeftHand();
         addRightHand();
 
@@ -60,7 +66,7 @@ public class GLRomanticDateActivity extends Activity {
         lp.gravity = Gravity.BOTTOM;
         flower.setLayoutParams(lp);
 
-        GLTexture texture = new GLTexture(FILE_FLOWER);
+        GLTexture texture = new GLTexture(FILE_FLOWER_ETC, FILE_FLOWER_ETC_ALPHA);
         flower.setTexture(texture);
 
         GLAnimation animation = new GLTranslateAnimation(
@@ -84,18 +90,18 @@ public class GLRomanticDateActivity extends Activity {
         lp.gravity = Gravity.CENTER_VERTICAL;
         leftHand.setLayoutParams(lp);
 
-        GLTexture texture = new GLTexture(FILE_LEFT_HAND);
+        GLTexture texture = new GLTexture(FILE_LEFT_HAND_ETC, FILE_LEFT_HAND_ETC_ALPHA);
         leftHand.setTexture(texture);
 
-//        GLAnimation animation = new GLTranslateAnimation(
-//                GLAnimation.RELATIVE_TO_SELF, -1f, GLAnimation.RELATIVE_TO_SELF, 0f,
-//                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
-//        GLAnimation animation = new GLRotateAnimation(0f, 360f,
-//                GLAnimation.RELATIVE_TO_PARENT, 0.75f,
-//                GLAnimation.RELATIVE_TO_SELF, 0.5f);
-        GLAnimation animation = new GLScaleAnimation(1f, 0f, 1f, 0f,
-                GLAnimation.RELATIVE_TO_PARENT, 1f, GLAnimation.RELATIVE_TO_SELF, 0.5f);
-        animation.setDuration(4000L);
+        GLAnimation animation = new GLTranslateAnimation(
+                GLAnimation.RELATIVE_TO_SELF, -1f, GLAnimation.RELATIVE_TO_SELF, 0f,
+                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
+////        GLAnimation animation = new GLRotateAnimation(0f, 360f,
+////                GLAnimation.RELATIVE_TO_PARENT, 0.75f,
+////                GLAnimation.RELATIVE_TO_SELF, 0.5f);
+//        GLAnimation animation = new GLScaleAnimation(1f, 0f, 1f, 0f,
+//                GLAnimation.RELATIVE_TO_PARENT, 1f, GLAnimation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(2000L);
         animation.setFillBefore(true);
         animation.setFillAfter(true);
         leftHand.setAnimation(animation);
@@ -107,19 +113,19 @@ public class GLRomanticDateActivity extends Activity {
         GLView rightHand = new GLView("rightHand");
 
         GLView.GLLayoutParams lp = new GLView.GLLayoutParams();
-        lp.widthRatio = 0.3f;
-        lp.height = 400;
+        lp.widthRatio = 0.5f;
+        lp.height = 600;
         lp.z = 0.8f;
-        lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        lp.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
         rightHand.setLayoutParams(lp);
 
-        GLTexture texture = new GLTexture(FILE_RIGHT_HAND);
+        GLTexture texture = new GLTexture(FILE_RIGHT_HAND_ETC, FILE_RIGHT_HAND_ETC_ALPHA);
         rightHand.setTexture(texture);
 
-//        GLAnimation animation = new GLTranslateAnimation(
-//                GLAnimation.RELATIVE_TO_SELF, 0.5f, GLAnimation.RELATIVE_TO_SELF, 0f,
-//                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
-        GLAnimation animation = new GLAlphaAnimation(0f, 1f);
+        GLAnimation animation = new GLTranslateAnimation(
+                GLAnimation.RELATIVE_TO_SELF, 1f, GLAnimation.RELATIVE_TO_SELF, 0f,
+                GLAnimation.RELATIVE_TO_SELF, 0f, GLAnimation.RELATIVE_TO_SELF, 0f);
+//        GLAnimation animation = new GLAlphaAnimation(0f, 1f);
         animation.setDuration(2000L);
         animation.setFillBefore(true);
         animation.setFillAfter(true);

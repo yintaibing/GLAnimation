@@ -107,7 +107,7 @@ public class Utils {
         return new float[]{1f, 1f, 1f, 1f};
     }
 
-    public static void loadTextures(List<GLView> views) {
+    public static void loadBitmapTextures(List<GLView> views) {
         if (views == null || views.isEmpty()) {
             return;
         }
@@ -122,12 +122,12 @@ public class Utils {
         for (GLView view : views) {
             texture = view.getTexture();
             if (texture != null) {
-                BitmapFactory.decodeFile(texture.path, options);
+                BitmapFactory.decodeFile(texture.filePath, options);
                 texture.pixelCount = options.outWidth * options.outHeight;
                 if (largestTexture == null ||
                         texture.pixelCount > largestTexture.pixelCount) {
                     largestTexture = texture;
-                    Log.e(TAG, "largestTexture=" + largestTexture.path);
+                    Log.e(TAG, "largestTexture=" + largestTexture.filePath);
                 }
                 count++;
             }
@@ -139,29 +139,29 @@ public class Utils {
         // load bitmaps and create textures
         options.inJustDecodeBounds = false;
         int[] textureIds = new int[count];
-        int index = 0;
         GLES20.glGenTextures(count, textureIds, 0);
 
+        int index = 0;
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[index]);
-        Bitmap bitmap = BitmapFactory.decodeFile(largestTexture.path, options);
+        Bitmap bitmap = BitmapFactory.decodeFile(largestTexture.filePath, options);
         createTextureFromBitmap(bitmap);
         largestTexture.id = textureIds[index];
         largestTexture.index = GLES20.GL_TEXTURE0 + index;
         Log.e(TAG, "created texture id=" + largestTexture.id
                 + " index=" + largestTexture.index
-                + " path=" + largestTexture.path);
+                + " filePath=" + largestTexture.filePath);
         index++;
         options.inBitmap = bitmap;
         for (GLView view : views) {
             texture = view.getTexture();
             if (texture != largestTexture) {
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[index]);
-                createTextureFromBitmap(BitmapFactory.decodeFile(texture.path, options));
+                createTextureFromBitmap(BitmapFactory.decodeFile(texture.filePath, options));
                 texture.id = textureIds[index];
                 texture.index = GLES20.GL_TEXTURE0 + index;
-                Log.e(TAG, "created texture id=" + texture.id
+                Log.e(TAG, "created bitmap texture id=" + texture.id
                         + " index=" + texture.index
-                        + " path=" + texture.path);
+                        + " filePath=" + texture.filePath);
                 index++;
             }
         }
@@ -169,9 +169,6 @@ public class Utils {
     }
 
     private static void createTextureFromBitmap(Bitmap bitmap) {
-//        int[] textures = new int[1];
-//        GLES20.glGenTextures(textures.length, textures, 0);
-//        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
         GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
                 GLES20.GL_LINEAR);
@@ -182,30 +179,48 @@ public class Utils {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
                 GLES20.GL_CLAMP_TO_EDGE);
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-
-//        bitmap.recycle();
-
-//        return textures[0];
     }
 
-    public static void loadTexturesETC(List<GLView> views) {
+    public static void loadEtc1Textures(List<GLView> views) {
         if (views == null || views.isEmpty()) {
             return;
         }
-        try {
-            GLTexture texture = views.get(0).getTexture();
-            int[] textureIds = new int[1];
-            GLES20.glGenTextures(textureIds.length, textureIds, 0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[0]);
-            createETC1Texture(texture.path);
-            texture.id = textureIds[0];
-            texture.index = GLES20.GL_TEXTURE0;
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        int count = 0;
+        GLTexture texture;
+        for (GLView view : views) {
+            texture = view.getTexture();
+            if (texture != null) {
+                count += 2;
+            }
+        }
+        if (count == 0) {
+            return;
+        }
+
+        int[] textureIds = new int[count];
+        GLES20.glGenTextures(textureIds.length, textureIds, 0);
+
+        int index = 0;
+        for (GLView view : views) {
+            texture = view.getTexture();
+            if (texture != null) {
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[index]);
+                createEtc1Texture(texture.filePath);
+                texture.id = textureIds[index];
+                texture.index = GLES20.GL_TEXTURE0 + index;
+                index++;
+
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[index]);
+                createEtc1Texture(texture.filePathEtcAlpha);
+                texture.idEtcAlpha = textureIds[index];
+                texture.indexEtcAlpha = GLES20.GL_TEXTURE0 + index;
+                index++;
+            }
         }
     }
 
-    private static void createETC1Texture(String path) {
+    private static void createEtc1Texture(String path) {
         try {
             GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
@@ -226,13 +241,11 @@ public class Utils {
 
             GLES20.glCompressedTexImage2D(GLES20.GL_TEXTURE_2D, 0, ETC1.ETC1_RGB8_OES,
                     width, height, 0, imageSize, data);
-//            GLES20.glCompressedTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, height/2, width, height/2,
-//                    ETC1.ETC1_RGB8_OES, imageSize/2,data);
 
             Log.e(TAG, "created etc texture, width=" + width
                     + " height=" + height
                     + " imageSize=" + imageSize
-                    + " path=" + path);
+                    + " filePath=" + path);
         } catch (IOException e) {
             e.printStackTrace();
         }
