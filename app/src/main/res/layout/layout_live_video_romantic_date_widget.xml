@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.yintaibing.glanimation_test.RomanticDateWidget
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_live_video_romantic_date_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:src="@drawable/bg_live_video_romantic_date_shadow"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_romantic_date_heart_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="130dp"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_romantic_date_heart_light_blink_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="130dp"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_romantic_date_heart_light_blink_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="130dp"/>
+
+    <FrameLayout
+        android:id="@+id/layout_live_video_romantic_date_flower"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:scaleType="fitXY"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/iv_live_video_romantic_date_flower_light_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/iv_live_video_romantic_date_flower_light_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/iv_live_video_romantic_date_left_hand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:layout_marginBottom="100dp"
+        android:layout_marginStart="-8dp"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_romantic_date_right_hand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="95dp"
+        android:layout_marginEnd="-8dp"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_romantic_date_float_heart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="240dp"/>
+
+    <FrameLayout
+        android:id="@+id/layout_live_video_romantic_date_falling"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/iv_live_video_romantic_date_falling_rotate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"/>
+    </FrameLayout>
+</me.yintaibing.glanimation_test.RomanticDateWidget>
