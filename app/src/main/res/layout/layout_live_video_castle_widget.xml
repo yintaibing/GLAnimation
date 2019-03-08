@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.yintaibing.glanimation_test.Castle1314Widget
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/iv_live_video_castle_lottie"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_castle_light_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_castle_light_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_castle_big_firework"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_castle_1314_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_live_video_castle_1314_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"/>
+</me.yintaibing.glanimation_test.Castle1314Widget>

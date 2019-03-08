@@ -30,5 +30,16 @@ public class MainActivity extends Activity {
                 startActivity(new Intent(MainActivity.this, NativeRomanticDateActivity.class));
             }
         });
+        findViewById(R.id.btn_gl_castle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+        findViewById(R.id.btn_native_castle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, NativeCastleActivity.class));
+            }
+        });
     }
 }
