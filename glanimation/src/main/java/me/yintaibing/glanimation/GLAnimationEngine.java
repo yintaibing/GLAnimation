@@ -83,7 +83,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
 
         // compileGLProgram();
         mProgram = new GLProgram(mGLSurfaceViewExt.getContext());
-        mProgram.setDebug(true);
+        mProgram.setDebug(false);
         mProgram.use();
 
         // face-culling
@@ -121,7 +121,7 @@ public class GLAnimationEngine implements GLSurfaceView.Renderer {
             return;
         }
 
-//        mProgram.makeDebug();
+        mProgram.makeDebug();
 
         // clear
         GLES20.glClearColor(0.8f, 0.8f, 0.9f, 1f);

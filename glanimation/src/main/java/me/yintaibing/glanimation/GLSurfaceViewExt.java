@@ -21,7 +21,7 @@ public class GLSurfaceViewExt extends GLSurfaceView {
 
     private void init() {
         setEGLContextClientVersion(2);
-        setEGLConfigChooser(8, 8, 8, 8, 24, 0);
+        setEGLConfigChooser(8, 8, 8, 0, 16, 0);
         setZOrderOnTop(false);
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
 //        getHolder().addCallback(null);

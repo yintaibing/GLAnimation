@@ -24,6 +24,8 @@
 
         <activity android:name="me.yintaibing.glanimation_test.NativeRomanticDateActivity" />
 
+        <activity android:name="me.yintaibing.glanimation_test.GLCastleActivity" />
+
         <activity android:name="me.yintaibing.glanimation_test.NativeCastleActivity" />
     </application>
 </manifest>
