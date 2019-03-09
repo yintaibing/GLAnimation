@@ -20,6 +20,8 @@
 
         <activity android:name="me.yintaibing.glanimation_test.TestGLPainterActivity" />
 
+        <activity android:name="me.yintaibing.glanimation_test.TestBitmapLoadActivity" />
+
         <activity android:name="me.yintaibing.glanimation_test.GLRomanticDateActivity" />
 
         <activity android:name="me.yintaibing.glanimation_test.NativeRomanticDateActivity" />

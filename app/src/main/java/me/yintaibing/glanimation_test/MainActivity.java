@@ -18,6 +18,12 @@ public class MainActivity extends Activity {
                 startActivity(new Intent(MainActivity.this, TestGLPainterActivity.class));
             }
         });
+        findViewById(R.id.btn_test_bitmap_load).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, TestBitmapLoadActivity.class));
+            }
+        });
         findViewById(R.id.btn_gl_romantic_date).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -3,8 +3,10 @@ package me.yintaibing.glanimation_test;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -108,10 +110,17 @@ public class RomanticDateWidget extends FrameLayout {
         opt.inDensity = DisplayMetrics.DENSITY_XHIGH;
         opt.inTargetDensity = getResources().getDisplayMetrics().densityDpi;
         opt.inScaled = true;
+        long byteCount = 0L;
+        long allocationByteCount = 0L;
         for (String file : files) {
             Bitmap bitmap = BitmapFactory.decodeFile(DIR + file, opt);
             mBitmaps.add(bitmap);
+            byteCount += bitmap.getByteCount();
+            if (Build.VERSION.SDK_INT >= 19) {
+                allocationByteCount += bitmap.getAllocationByteCount();
+            }
         }
+        Log.e("RomanticDate", "byteCount=" + byteCount + " allocationByteCount=" + allocationByteCount);
 //                }, DisplayMetrics.DENSITY_XHIGH, false);// 原图是按DENSITY_XHIGH制作的
         mIvHeartLight.setImageBitmap(mBitmaps.get(0));
         mIvHeartLightBlink1.setImageBitmap(mBitmaps.get(1));
