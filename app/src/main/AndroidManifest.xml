@@ -29,5 +29,9 @@
         <activity android:name="me.yintaibing.glanimation_test.GLCastleActivity" />
 
         <activity android:name="me.yintaibing.glanimation_test.NativeCastleActivity" />
+
+        <activity android:name="me.yintaibing.glanimation_test.CombinePngActivity" />
+
+        <activity android:name="me.yintaibing.ppt.PPTActivity"/>
     </application>
 </manifest>
