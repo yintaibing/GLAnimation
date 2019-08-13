@@ -69,6 +69,21 @@ public class Utils {
         return null;
     }
 
+    public static int compileShader(int shaderType, String srcCode) {
+        int shader = GLES20.glCreateShader(shaderType);
+        GLES20.glShaderSource(shader, srcCode);
+        GLES20.glCompileShader(shader);
+        return shader;
+    }
+
+    public static int linkProgram(int vertexShaderId, int fragmentShaderId) {
+        int mProgramHandle = GLES20.glCreateProgram();
+        GLES20.glAttachShader(mProgramHandle, vertexShaderId);
+        GLES20.glAttachShader(mProgramHandle, fragmentShaderId);
+        GLES20.glLinkProgram(mProgramHandle);
+        return mProgramHandle;
+    }
+
     /**
      * 将android坐标系映射到OpenGL标准坐标系
      *
